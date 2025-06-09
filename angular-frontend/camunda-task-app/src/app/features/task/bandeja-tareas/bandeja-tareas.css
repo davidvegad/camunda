@@ -1,0 +1,108 @@
+.bandeja-container {
+  background: #faf9f6;
+  padding: 32px 24px;
+  border-radius: 10px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+  margin: 32px 0 0 0;
+}
+
+.filtros-bandeja {
+  background: #fff3e0;
+  padding: 16px 24px 8px 24px;
+  border-radius: 7px;
+  margin-bottom: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+}
+.filtros-bandeja input,
+.filtros-bandeja button {
+  margin-right: 12px;
+  font-size: 15px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+.filtros-bandeja button {
+  background: #ff9800;
+  color: #fff;
+  border: none;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+.filtros-bandeja button:hover {
+  background: #e65100;
+}
+.btn-limpiar {
+  background: #bdbdbd !important;
+  color: #fff !important;
+}
+.btn-limpiar:hover {
+  background: #757575 !important;
+}
+
+.table-bandeja {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  margin-top: 20px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.03);
+  border-radius: 7px;
+  overflow: hidden;
+}
+.table-bandeja th, .table-bandeja td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+.table-bandeja th {
+  background: #ffe0b2;
+  font-weight: bold;
+  color: #7a4f01;
+  border-bottom: 2px solid #ff9800;
+}
+.table-bandeja tr:last-child td {
+  border-bottom: none;
+}
+.table-bandeja tr:hover {
+  background: #fffde7;
+}
+.btn-detalle {
+  background: #ff9800;
+  color: #fff;
+  border: none;
+  padding: 7px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-detalle:hover {
+  background: #e65100;
+}
+.sin-tareas {
+  text-align: center;
+  color: #bdbdbd;
+  font-style: italic;
+}
+.paginacion {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+.paginacion button {
+  background: #ff9800;
+  color: #fff;
+  border: none;
+  padding: 7px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.paginacion button[disabled] {
+  background: #ffc107;
+  color: #fff;
+  cursor: default;
+}

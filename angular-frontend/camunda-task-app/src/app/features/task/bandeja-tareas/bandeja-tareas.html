@@ -1,52 +1,60 @@
-<div class="filtros" style="margin-bottom: 1em; display:flex; gap:1em; flex-wrap: wrap;">
-  <label>
-    Proceso:
-    <input [(ngModel)]="filtroProceso" placeholder="Nombre del proceso" />
-  </label>
-  <label>
-    Business Key:
-    <input [(ngModel)]="filtroBusinessKey" placeholder="Business Key" />
-  </label>
-  <label>
-    Fecha desde:
-    <input type="date" [(ngModel)]="filtroFechaDesde" />
-  </label>
-  <label>
-    Fecha hasta:
-    <input type="date" [(ngModel)]="filtroFechaHasta" />
-  </label>
-  <button type="button" (click)="aplicarFiltros()">Buscar</button>
-  <button type="button" (click)="limpiarFiltros()">Limpiar</button>
-</div>
+<div class="bandeja-container">
 
-<table>
-  <thead>
-    <tr>
-      <th>Nombre Proceso</th>
-      <th>BusinessKey</th>
-      <th>Nombre</th>
-      <th>Asignado</th>
-      <th>Fecha Creación</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let tarea of tareas" (click)="verTarea(tarea)" style="cursor:pointer">
-      <td>{{ tarea.nombreProceso }}</td>
-      <td>{{ tarea.businessKey }}</td>
-      <td>{{ tarea.nombre }}</td>
-      <td>{{ tarea.asignado || '-' }}</td>
-      <td>{{ tarea.fechaCreacion | date:'dd/MM/yyyy' }}</td>
-      <td>
-        <!-- más acciones aquí -->
-        Detalle
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <div class="filtros-bandeja">
+    <label>
+      Proceso:
+      <input [(ngModel)]="filtroProceso" placeholder="Nombre del proceso" />
+    </label>
+    <label>
+      Business Key:
+      <input [(ngModel)]="filtroBusinessKey" placeholder="Business Key" />
+    </label>
+    <label>
+      Fecha desde:
+      <input type="date" [(ngModel)]="filtroFechaDesde" />
+    </label>
+    <label>
+      Fecha hasta:
+      <input type="date" [(ngModel)]="filtroFechaHasta" />
+    </label>
+    <button type="button" (click)="aplicarFiltros()">Buscar</button>
+    <button type="button" class="btn-limpiar" (click)="limpiarFiltros()">Limpiar</button>
+  </div>
 
-<div style="margin-top:1em;">
-  <button type="button" (click)="paginaAnterior()" [disabled]="paginaActual <= 1">Anterior</button>
-  <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
-  <button type="button" (click)="paginaSiguiente()" [disabled]="paginaActual >= totalPaginas">Siguiente</button>
+  <table class="table-bandeja">
+    <thead>
+      <tr>
+        <th>Nombre Proceso</th>
+        <th>BusinessKey</th>
+        <th>Nombre</th>
+        <th>Asignado</th>
+        <th>Fecha Creación</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let tarea of tareas">
+        <td>{{ tarea.nombreProceso }}</td>
+        <td>{{ tarea.businessKey }}</td>
+        <td>{{ tarea.nombre }}</td>
+        <td>{{ tarea.asignado || '-' }}</td>
+        <td>{{ tarea.fechaCreacion | date:'dd/MM/yyyy' }}</td>
+        <td>
+          <button class="btn-detalle" type="button" (click)="verTarea(tarea); $event.stopPropagation()">Detalle
+		  <span style="font-size:16px;vertical-align:middle;">🔎</span>
+		  </button>
+        </td>
+      </tr>
+      <tr *ngIf="tareas.length === 0">
+        <td colspan="6" class="sin-tareas">No hay tareas para mostrar.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="paginacion">
+    <button type="button" (click)="paginaAnterior()" [disabled]="paginaActual <= 1">Anterior</button>
+    <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+    <button type="button" (click)="paginaSiguiente()" [disabled]="paginaActual >= totalPaginas">Siguiente</button>
+  </div>
+
 </div>

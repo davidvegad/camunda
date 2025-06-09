@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
   selector: 'app-bandeja-tareas',
   standalone: true,
   imports: [CommonModule, FormsModule],
+  styleUrls: ['./bandeja-tareas.css'],
   templateUrl: './bandeja-tareas.html',
 })
 export class BandejaTareasComponent implements OnInit {
