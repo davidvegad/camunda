@@ -11,8 +11,8 @@ export const routes: Routes = [
 ];*/
 
 import { Routes } from '@angular/router';
-import { HomeComponent } from './components/home/home';
-import { TaskDetailComponent } from './components/task-detail/task-detail';
+import { HomeComponent } from './features/home/home';
+import { TaskDetailComponent } from './features/task/task-detail/task-detail';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },

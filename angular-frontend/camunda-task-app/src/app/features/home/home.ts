@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProcesoInicioComponent } from '../proceso-inicio/proceso-inicio';
-import { BandejaTareasComponent } from '../bandeja-tareas/bandeja-tareas';
+import { ProcesoInicioComponent } from '../process/proceso-inicio/proceso-inicio';
+import { BandejaTareasComponent } from '../task/bandeja-tareas/bandeja-tareas';
 
 @Component({
   selector: 'app-home',

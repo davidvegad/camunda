@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ProcesoService } from '../../services/proceso';
+import { ProcesoService } from '../../../core/services/proceso';
 import { Router } from '@angular/router';
 
 @Component({
