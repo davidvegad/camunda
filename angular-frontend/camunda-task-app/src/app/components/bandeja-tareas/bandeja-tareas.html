@@ -1,0 +1,48 @@
+<div class="filtros" style="margin-bottom: 1em; display:flex; gap:1em; flex-wrap: wrap;">
+  <label>
+    Proceso:
+    <input [(ngModel)]="filtroProceso" placeholder="Nombre del proceso" />
+  </label>
+  <label>
+    Business Key:
+    <input [(ngModel)]="filtroBusinessKey" placeholder="Business Key" />
+  </label>
+  <label>
+    Fecha de creación:
+    <input type="date" [(ngModel)]="filtroFechaCreacion" />
+  </label>
+  <button type="button" (click)="aplicarFiltros()">Buscar</button>
+  <button type="button" (click)="limpiarFiltros()">Limpiar</button>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nombre Proceso</th>
+      <th>BusinessKey</th>
+      <th>Nombre</th>
+      <th>Asignado</th>
+      <th>Fecha Creación</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let tarea of tareas" (click)="verTarea(tarea)" style="cursor:pointer">
+      <td>{{ tarea.nombreProceso }}</td>
+      <td>{{ tarea.businessKey }}</td>
+      <td>{{ tarea.nombre }}</td>
+      <td>{{ tarea.asignado || '-' }}</td>
+      <td>{{ tarea.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
+      <td>
+        <!-- puedes poner más botones si lo necesitas -->
+        Detalle
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div style="margin-top:1em;">
+  <button type="button" (click)="paginaAnterior()" [disabled]="paginaActual <= 1">Anterior</button>
+  <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+  <button type="button" (click)="paginaSiguiente()" [disabled]="paginaActual >= totalPaginas">Siguiente</button>
+</div>

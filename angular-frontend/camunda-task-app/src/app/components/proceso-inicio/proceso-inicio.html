@@ -1,0 +1,22 @@
+<h2>Iniciar Proceso</h2>
+
+<form (ngSubmit)="onIniciarProceso()" #formProceso="ngForm">
+  <div>
+    <label for="definitionKey">Selecciona el proceso:</label>
+    <select id="definitionKey" name="definitionKey" [(ngModel)]="definitionKey" required>
+      <option value="">-- Selecciona un proceso --</option>
+      <option *ngFor="let proc of procesos" [value]="proc.key">
+        {{ proc.name || proc.key }}
+      </option>
+    </select>
+  </div>
+
+  <button type="submit" [disabled]="!definitionKey">Iniciar Proceso</button>
+</form>
+
+<div *ngIf="mensaje" style="color: green; margin-top: 1em;">
+  {{ mensaje }}
+</div>
+<div *ngIf="error" style="color: red; margin-top: 1em;">
+  {{ error }}
+</div>
