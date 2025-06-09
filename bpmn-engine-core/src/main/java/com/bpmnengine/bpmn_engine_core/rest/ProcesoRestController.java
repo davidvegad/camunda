@@ -318,15 +318,14 @@ public class ProcesoRestController {
 	        @RequestParam(defaultValue = "10") int size,
 	        @RequestParam(required = false) String procesoNombre,
 	        @RequestParam(required = false) String businessKey,
-	        @RequestParam(required = false) String fechaCreacion,
+	        @RequestParam(required = false) String fechaDesde,
+	        @RequestParam(required = false) String fechaHasta,
 	        @RequestParam(required = false) String usuario) {
 
-	    // Filtro por usuario asignado/candidato/candidato grupo
+	    // --- Tareas filtradas por usuario ---
 	    TaskQuery query = taskService.createTaskQuery().active();
-
 	    if (usuario != null && !usuario.isEmpty()) {
 	        query = query.or().taskAssignee(usuario).taskCandidateUser(usuario);
-
 	        List<String> grupos = identityService.createGroupQuery().groupMember(usuario).list()
 	                .stream().map(Group::getId).collect(Collectors.toList());
 	        for (String grupo : grupos) {
@@ -335,7 +334,7 @@ public class ProcesoRestController {
 	        query = query.endOr();
 	    }
 
-	    // Filtro por businessKey (a nivel de instancia de proceso)
+	    // --- Filtro por businessKey ---
 	    if (businessKey != null && !businessKey.isEmpty()) {
 	        List<String> procIds = runtimeService.createProcessInstanceQuery()
 	                .processInstanceBusinessKey(businessKey)
@@ -343,54 +342,62 @@ public class ProcesoRestController {
 	        if (!procIds.isEmpty())
 	            query = query.processInstanceIdIn(procIds.toArray(new String[0]));
 	        else
-	            query = query.processInstanceId("NO_EXISTE"); // fuerza vacío si no hay coincidencias
+	            query = query.processInstanceId("NO_EXISTE"); // fuerza vacío
 	    }
 
-	    // Filtro por fecha de creación
-	    if (fechaCreacion != null && !fechaCreacion.isEmpty()) {
+	    // --- Filtro por rango de fechas ---
+	    if ((fechaDesde != null && !fechaDesde.isEmpty()) || (fechaHasta != null && !fechaHasta.isEmpty())) {
 	        Calendar cal = Calendar.getInstance();
-	        String[] partes = fechaCreacion.split("-");
-	        cal.set(Calendar.YEAR, Integer.parseInt(partes[0]));
-	        cal.set(Calendar.MONTH, Integer.parseInt(partes[1]) - 1);
-	        cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(partes[2]));
-	        cal.set(Calendar.HOUR_OF_DAY, 0);
-	        cal.set(Calendar.MINUTE, 0);
-	        cal.set(Calendar.SECOND, 0);
-	        Date desde = cal.getTime();
-	        cal.add(Calendar.DAY_OF_MONTH, 1);
-	        Date hasta = cal.getTime();
-	        query = query.taskCreatedAfter(desde).taskCreatedBefore(hasta);
+	        Date desde = null, hasta = null;
+	        if (fechaDesde != null && !fechaDesde.isEmpty()) {
+	            String[] partes = fechaDesde.split("-");
+	            cal.set(Calendar.YEAR, Integer.parseInt(partes[0]));
+	            cal.set(Calendar.MONTH, Integer.parseInt(partes[1]) - 1);
+	            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(partes[2]));
+	            cal.set(Calendar.HOUR_OF_DAY, 0);
+	            cal.set(Calendar.MINUTE, 0);
+	            cal.set(Calendar.SECOND, 0);
+	            cal.set(Calendar.MILLISECOND, 0);
+	            desde = cal.getTime();
+	        }
+	        if (fechaHasta != null && !fechaHasta.isEmpty()) {
+	            String[] partes = fechaHasta.split("-");
+	            cal.set(Calendar.YEAR, Integer.parseInt(partes[0]));
+	            cal.set(Calendar.MONTH, Integer.parseInt(partes[1]) - 1);
+	            cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(partes[2]));
+	            cal.set(Calendar.HOUR_OF_DAY, 23);
+	            cal.set(Calendar.MINUTE, 59);
+	            cal.set(Calendar.SECOND, 59);
+	            cal.set(Calendar.MILLISECOND, 999);
+	            hasta = cal.getTime();
+	        }
+	        if (desde != null) query = query.taskCreatedAfter(desde);
+	        if (hasta != null) query = query.taskCreatedBefore(hasta);
 	    }
 
-	    // Pre-filtrado en memoria por processDefinitionId (procesoNombre)
-	    List<String> idsDefinicionFiltrar = null;
+	    // --- Obtén todas las tareas filtradas (sin paginar aún) ---
+	    List<Task> tareas = query.orderByTaskCreateTime().desc().list();
+
+	    // --- Filtro por nombre de proceso (en memoria, pero antes de paginar) ---
 	    if (procesoNombre != null && !procesoNombre.isEmpty()) {
-	        idsDefinicionFiltrar = repositoryService.createProcessDefinitionQuery()
+	        final List<String> idsDefinicionFiltrar = repositoryService.createProcessDefinitionQuery()
 	                .processDefinitionNameLike("%" + procesoNombre + "%")
 	                .list().stream().map(ProcessDefinition::getId).collect(Collectors.toList());
-	        if (idsDefinicionFiltrar.isEmpty()) {
-	            idsDefinicionFiltrar = Collections.singletonList("NO_EXISTE");
-	        }
-	    }
-
-	    // Paginación y conteo
-	    int firstResult = (page - 1) * size;
-	    long totalElements = query.count();
-
-	    List<Task> tareas = query.orderByTaskCreateTime().desc().listPage(firstResult, size);
-
-	    // Filtrar por processDefinitionId si corresponde (procesoNombre)
-	    if (idsDefinicionFiltrar != null) {
-	        final List<String> idsDefinicionFiltrarFinal = idsDefinicionFiltrar;
 	        tareas = tareas.stream()
-	            .filter(t -> idsDefinicionFiltrarFinal.contains(t.getProcessDefinitionId()))
-	            .collect(Collectors.toList());
-	        totalElements = tareas.size();
+	                .filter(t -> idsDefinicionFiltrar.contains(t.getProcessDefinitionId()))
+	                .collect(Collectors.toList());
 	    }
 
+	    // --- Calcula paginación real luego de todos los filtros ---
+	    int totalElements = tareas.size();
+	    int totalPages = (int) Math.ceil((double) totalElements / size);
 
-	    // Mapear a DTO extendido
-	    List<TareaDetalleDto> tareaDtos = tareas.stream().map(task -> {
+	    int fromIndex = Math.max((page - 1) * size, 0);
+	    int toIndex = Math.min(fromIndex + size, totalElements);
+	    List<Task> tareasPagina = (fromIndex < toIndex) ? tareas.subList(fromIndex, toIndex) : Collections.emptyList();
+
+	    // --- Mapear a DTO extendido ---
+	    List<TareaDetalleDto> tareaDtos = tareasPagina.stream().map(task -> {
 	        String businessKeyTask = runtimeService.createProcessInstanceQuery()
 	                .processInstanceId(task.getProcessInstanceId())
 	                .singleResult()
@@ -399,7 +406,7 @@ public class ProcesoRestController {
 	        ProcessDefinition def = repositoryService.createProcessDefinitionQuery()
 	                .processDefinitionId(task.getProcessDefinitionId())
 	                .singleResult();
-	        String nombreProceso = def != null ? def.getName() : "";
+	        String nombreProcesoDto = def != null ? def.getName() : "";
 
 	        return new TareaDetalleDto(
 	                task.getId(),
@@ -408,11 +415,9 @@ public class ProcesoRestController {
 	                task.getCreateTime(),
 	                task.getProcessInstanceId(),
 	                businessKeyTask,
-	                nombreProceso
+	                nombreProcesoDto
 	        );
 	    }).collect(Collectors.toList());
-
-	    int totalPages = (int) Math.ceil((double) totalElements / size);
 
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("content", tareaDtos);
@@ -423,6 +428,7 @@ public class ProcesoRestController {
 
 	    return response;
 	}
+
 
 
 

@@ -8,8 +8,12 @@
     <input [(ngModel)]="filtroBusinessKey" placeholder="Business Key" />
   </label>
   <label>
-    Fecha de creación:
-    <input type="date" [(ngModel)]="filtroFechaCreacion" />
+    Fecha desde:
+    <input type="date" [(ngModel)]="filtroFechaDesde" />
+  </label>
+  <label>
+    Fecha hasta:
+    <input type="date" [(ngModel)]="filtroFechaHasta" />
   </label>
   <button type="button" (click)="aplicarFiltros()">Buscar</button>
   <button type="button" (click)="limpiarFiltros()">Limpiar</button>
@@ -32,9 +36,9 @@
       <td>{{ tarea.businessKey }}</td>
       <td>{{ tarea.nombre }}</td>
       <td>{{ tarea.asignado || '-' }}</td>
-      <td>{{ tarea.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</td>
+      <td>{{ tarea.fechaCreacion | date:'dd/MM/yyyy' }}</td>
       <td>
-        <!-- puedes poner más botones si lo necesitas -->
+        <!-- más acciones aquí -->
         Detalle
       </td>
     </tr>

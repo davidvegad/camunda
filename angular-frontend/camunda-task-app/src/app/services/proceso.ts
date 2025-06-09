@@ -15,14 +15,20 @@ export class ProcesoService {
     });
   }*/
   
-  obtenerTareasDetalladas(pagina: number, tamanio: number, filtros: any = {}): Observable<any> {
+  obtenerTareasDetalladas(
+  pagina: number,
+  tamanio: number,
+  filtros: any = {}
+): Observable<any> {
   let params: any = { page: pagina, size: tamanio };
   if (filtros.procesoNombre) params.procesoNombre = filtros.procesoNombre;
   if (filtros.businessKey) params.businessKey = filtros.businessKey;
-  if (filtros.fechaCreacion) params.fechaCreacion = filtros.fechaCreacion;
+  if (filtros.fechaDesde) params.fechaDesde = filtros.fechaDesde;
+  if (filtros.fechaHasta) params.fechaHasta = filtros.fechaHasta;
   if (filtros.usuario) params.usuario = filtros.usuario;
   return this.http.get(`${backendUrl}/tareas-detalladas`, { params });
 }
+
 
 
 // Listar procesos disponibles

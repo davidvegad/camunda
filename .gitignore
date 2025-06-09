@@ -1,0 +1,36 @@
+# === Angular frontend ===
+/angular-frontend/camunda-task-app/dist/
+/angular-frontend/camunda-task-app/out-tsc/
+/angular-frontend/camunda-task-app/node_modules/
+/angular-frontend/camunda-task-app/.angular/
+/angular-frontend/camunda-task-app/coverage/
+/angular-frontend/camunda-task-app/.env
+/angular-frontend/camunda-task-app/.vscode/
+/angular-frontend/camunda-task-app/.idea/
+
+# === Spring Boot backend ===
+/bpmn-engine-core/target/
+/bpmn-engine-core/logs/
+/bpmn-engine-core/.mvn/
+/bpmn-engine-core/.settings/
+/bpmn-engine-core/*.log
+/bpmn-engine-core/*.tmp
+/bpmn-engine-core/*.bak
+/bpmn-engine-core/*.swp
+/bpmn-engine-core/*.orig
+/bpmn-engine-core/*.iml
+/bpmn-engine-core/*.ipr
+
+# === IDEs y sistema operativo ===
+.metadata/
+.sonarlint/
+RemoteSystemsTempFiles/
+.DS_Store
+Thumbs.db
+
+# === Archivos temporales o bloqueados ===
+*.swo
+*.swp
+*.rej
+*.orig
+*.lock
