@@ -1,22 +1,27 @@
-/*import { Routes } from '@angular/router';
-import { BandejaTareasComponent } from './components/bandeja-tareas/bandeja-tareas';
-import { TaskDetailComponent } from './components/task-detail/task-detail';
-// ...otros imports
-
-export const routes: Routes = [
-  { path: '', redirectTo: '/bandeja-tareas', pathMatch: 'full' },
-  { path: 'bandeja-tareas', component: BandejaTareasComponent },
-  { path: 'task-detail/:id', component: TaskDetailComponent },
-  { path: '**', redirectTo: '/bandeja-tareas', pathMatch: 'full' }
-];*/
-
 import { Routes } from '@angular/router';
-import { HomeComponent } from './features/home/home';
-import { TaskDetailComponent } from './features/task/task-detail/task-detail';
+import { LayoutComponent } from './core/layout/layout';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'task-detail/:id', component: TaskDetailComponent },
-  { path: '**', redirectTo: '' }
+  {
+    path: '',
+    component: LayoutComponent,
+    children: [
+      {
+        path: 'bandeja-tareas',
+        loadComponent: () =>
+          import('./features/task/bandeja-tareas/bandeja-tareas').then(m => m.BandejaTareasComponent)
+      },
+      {
+        path: 'proceso-inicio',
+        loadComponent: () =>
+          import('./features/process/proceso-inicio/proceso-inicio').then(m => m.ProcesoInicioComponent)
+      },
+	  {
+		path: 'task-detail/:id',
+		loadComponent: () =>
+		  import('./features/task/task-detail/task-detail').then(m => m.TaskDetailComponent)
+	  },
+      { path: '', redirectTo: '/bandeja-tareas', pathMatch: 'full' }
+    ]
+  }
 ];
-
