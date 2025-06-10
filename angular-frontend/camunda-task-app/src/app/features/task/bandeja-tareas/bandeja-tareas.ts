@@ -13,40 +13,95 @@ import { Router } from '@angular/router';
 })
 export class BandejaTareasComponent implements OnInit {
   tareas: any[] = [];
-  paginaActual: number = 1;
-  tamanoPagina: number = 10;
-  totalPaginas: number = 1;
+  // Otros
+  paginaActual = 1;
+  size = 10;
+  totalPaginas = 1;
+  totalElementos = 0;
+  
+  usuario: string = 'admin'; // o asigna el valor real desde tu lógica de login
 
-  // Filtros
+  
+  // Filtros para pestañas
+  filtroActivo: 'proceso' | 'tarea' = 'proceso';
+
+  // Proceso
   filtroProceso: string = '';
   filtroBusinessKey: string = '';
-  filtroFechaDesde: string = '';
-  filtroFechaHasta: string = '';
-  usuario: string = 'admin'; // O el usuario autenticado
+  filtroProcFechaDesde: string = '';
+  filtroProcFechaHasta: string = '';
 
+  // Tarea
+  filtroTareaNombre: string = '';
+  filtroTareaEstado: string = '';
+  filtroTareaPeriodo: string = '';
+  filtroTareaFechaDesde: string = '';
+  filtroTareaFechaHasta: string = '';
+  filtroTareaUsuario: string = '';
+  
+  listaProcesos: any[] = [];
+
+  
+  
   constructor(private procesoService: ProcesoService, private router: Router) {}
 
   ngOnInit(): void {
     this.cargarTareas();
+	this.cargarProcesosDisponibles();
   }
+  
+
 
   cargarTareas(): void {
-    const filtros = {
-      procesoNombre: this.filtroProceso,
-      businessKey: this.filtroBusinessKey,
-      fechaDesde: this.filtroFechaDesde,
-      fechaHasta: this.filtroFechaHasta,
-      usuario: this.usuario
-    };
-    this.procesoService.obtenerTareasDetalladas(this.paginaActual, this.tamanoPagina, filtros).subscribe(
-      (data: any) => {
-        this.tareas = data.content;
-        this.totalPaginas = data.totalPages;
-      },
-      (error: any) => {
-        console.error('Error al cargar tareas:', error);
-      }
-    );
+     let filtros: any = {};
+	if (this.filtroActivo === 'proceso') {
+      filtros.procesoNombre = this.filtroProceso;
+      filtros.businessKey = this.filtroBusinessKey;
+      filtros.fechaDesdeProceso = this.filtroProcFechaDesde;
+      filtros.fechaHastaProceso = this.filtroProcFechaHasta;
+    }
+
+    if (this.filtroActivo === 'tarea') {
+      filtros.tareaNombre = this.filtroTareaNombre;
+      filtros.estado = this.filtroTareaEstado;
+      filtros.periodo = this.filtroTareaPeriodo;
+      filtros.fechaDesdeTarea = this.filtroTareaFechaDesde;
+      filtros.fechaHastaTarea = this.filtroTareaFechaHasta;
+      filtros.usuarioAceptado = this.filtroTareaUsuario;
+    }
+	
+	
+	 // Si quieres enviar usuario global:
+     filtros.usuario = this.usuario;
+	
+    this.procesoService.obtenerTareasDetalladasAvanzado(this.paginaActual, this.size, filtros)
+      .subscribe(resp => {
+        this.tareas = resp.content;
+        this.totalPaginas = resp.totalPages;
+        this.totalElementos = resp.totalElements;
+      });
+  }
+  
+  cargarProcesosDisponibles() {
+  this.procesoService.listarProcesosDisponibles().subscribe(procesos => {
+    this.listaProcesos = procesos;
+  });
+}
+
+  limpiarFiltros() {
+    // Limpia todos los filtros
+    this.filtroProceso = '';
+    this.filtroBusinessKey = '';
+    this.filtroProcFechaDesde = '';
+    this.filtroProcFechaHasta = '';
+    this.filtroTareaNombre = '';
+    this.filtroTareaEstado = '';
+    this.filtroTareaPeriodo = '';
+    this.filtroTareaFechaDesde = '';
+    this.filtroTareaFechaHasta = '';
+    this.filtroTareaUsuario = '';
+	
+	this.actualizarPaginacion();
   }
 
   paginaAnterior(): void {
@@ -72,15 +127,19 @@ export class BandejaTareasComponent implements OnInit {
     this.paginaActual = 1;
     this.cargarTareas();
   }
+  
+  verDetalle(tarea: any) {
+  // Aquí irá la navegación o acción para ver el detalle de la tarea.
+  // Por ahora, solo imprime en consola.
+  console.log('Ver detalle:', tarea);
+}
 
-  limpiarFiltros(): void {
-    this.filtroProceso = '';
-    this.filtroBusinessKey = '';
-    this.filtroFechaDesde = '';
-    this.filtroFechaHasta = '';
-    this.paginaActual = 1;
-    this.cargarTareas();
-  }
+cambiarPagina(nuevaPagina: number) {
+  this.paginaActual = nuevaPagina;
+  this.aplicarFiltros(); // Vuelve a pedir datos para la página seleccionada.
+}
+
+
 
   verTarea(tarea: any): void {
     this.procesoService.reclamarTarea(tarea.id, this.usuario).subscribe({

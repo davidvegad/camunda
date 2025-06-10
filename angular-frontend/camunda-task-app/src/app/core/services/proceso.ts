@@ -15,19 +15,31 @@ export class ProcesoService {
     });
   }*/
   
-  obtenerTareasDetalladas(
-  pagina: number,
-  tamanio: number,
-  filtros: any = {}
-): Observable<any> {
-  let params: any = { page: pagina, size: tamanio };
-  if (filtros.procesoNombre) params.procesoNombre = filtros.procesoNombre;
-  if (filtros.businessKey) params.businessKey = filtros.businessKey;
-  if (filtros.fechaDesde) params.fechaDesde = filtros.fechaDesde;
-  if (filtros.fechaHasta) params.fechaHasta = filtros.fechaHasta;
-  if (filtros.usuario) params.usuario = filtros.usuario;
-  return this.http.get(`${backendUrl}/tareas-detalladas`, { params });
-}
+  obtenerTareasDetalladasAvanzado(
+    pagina: number,
+    tamanio: number,
+    filtros: any = {}
+  ): Observable<any> {
+    let params: any = { page: pagina, size: tamanio };
+
+    // Proceso
+    if (filtros.procesoNombre)   params.procesoNombre = filtros.procesoNombre;
+    if (filtros.businessKey)     params.businessKey = filtros.businessKey;
+    if (filtros.fechaDesdeProceso) params.fechaDesdeProceso = filtros.fechaDesdeProceso;
+    if (filtros.fechaHastaProceso) params.fechaHastaProceso = filtros.fechaHastaProceso;
+
+    // Tarea
+    if (filtros.fechaDesdeTarea) params.fechaDesdeTarea = filtros.fechaDesdeTarea;
+    if (filtros.fechaHastaTarea) params.fechaHastaTarea = filtros.fechaHastaTarea;
+    if (filtros.tareaNombre)     params.tareaNombre = filtros.tareaNombre;
+    if (filtros.estado)          params.estado = filtros.estado;
+    if (filtros.periodo)         params.periodo = filtros.periodo;
+    if (filtros.usuarioAceptado) params.usuarioAceptado = filtros.usuarioAceptado;
+
+    if (filtros.usuario)         params.usuario = filtros.usuario;
+
+    return this.http.get(`${backendUrl}/tareas-detalladas`, { params });
+  }
 
 
 
