@@ -120,6 +120,7 @@ export class TaskDetailComponent implements OnInit {
   }
   
   completar() {
+	 
     let algunInvalido = false;
     this.formulariosDinamicos.forEach((formDin, idx) => {
       formDin.formulario.markAllAsTouched();
@@ -135,22 +136,39 @@ export class TaskDetailComponent implements OnInit {
     const usuario = 'admin'; // O el usuario autenticado de la sesión
 
     this.formulariosDinamicos.forEach((formDin, idx) => {
-      const payload = {
+    const  payload = {
         formularioId: this.formularios[idx].id,
         tareaIdCamunda,
         usuario,
         valores: formDin.formulario.value
       };
       this.procesoService.guardarRegistroFormulario(payload).subscribe({
-        next: () => {},
+        next: () => {
+			alert('Formularios guardados exitosamente');
+    //this.onCompletarTarea(payload);
+	this.isLoading = false;
+    this.procesoService.completarTarea(this.tareaId, payload).subscribe(
+      () => {
+        console.log('¡Suscripción exitosa! Voy a mostrar mensaje y redirigir');
+        this.mensaje = 'Tarea completada correctamente';
+        setTimeout(() => {
+          this.router.navigate(['/']);
+        }, 1500);
+      },
+      (err: any) => {
+        this.isLoading = false;
+        this.errorMensaje = 'Error al completar tarea: ' + (err?.message || err);
+        console.error('Error al completar tarea:', err);
+      }
+    );
+		},
         error: err => {
           alert(`Error guardando formulario "${this.formularios[idx]?.nombre || ''}"`);
         }
       });
     });
 
-    alert('Formularios guardados exitosamente');
-    this.onCompletarTarea();
+    
   }
 
   
