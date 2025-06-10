@@ -1,36 +1,61 @@
-.tabs {
-  display: flex;
-  gap: 12px;
-  list-style: none;
-  margin: 0 0 24px 0;
-  padding: 0;
-}
-.tabs li {
-  padding: 8px 16px;
-  border-radius: 8px 8px 0 0;
-  background: #eee;
-  cursor: pointer;
-}
-.tabs li.active {
-  background: #ffaa30;
-  color: #fff;
-}
-.acciones {
-  margin-top: 24px;
-  display: flex;
-  gap: 12px;
+.tabs-container {
+  margin: 2rem 0;
 }
 
-.button {
-  background: #fca311;
-  color: #fff;
-  font-weight: 600;
-  border: none;
-  border-radius: 8px;
-  padding: 7px 24px;
-  margin: 0 5px 0 0;
-  transition: background 0.15s;
-  box-shadow: 0 2px 8px #fca31122;
-  cursor: pointer;
+.tabs-list {
+  display: flex;
+  border-bottom: 2px solid #E0E7EF;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
 }
-button:hover { background: #e88309; }
+
+.tabs-list li {
+  padding: 1rem 2rem;
+  cursor: pointer;
+  background: #F5F8FA;
+  color: #334155;
+  border: 1px solid #E0E7EF;
+  border-bottom: none;
+  border-radius: 1rem 1rem 0 0;
+  margin-right: 0.5rem;
+  transition: background 0.2s, color 0.2s;
+  font-weight: 500;
+}
+
+.tabs-list li.active {
+  background: #fff;
+  color: #ff9800;
+  border-bottom: 2px solid #fff;
+}
+
+.tab-content {
+  background: #fff;
+  padding: 2rem;
+  border: 1px solid #E0E7EF;
+  border-radius: 0 1rem 1rem 1rem;
+  min-height: 200px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+.task-detail-actions {
+  margin-top: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.task-detail-actions button {
+  background: #ff9800;
+  color: #fff;
+  border: none;
+  border-radius: 0.7rem;
+  padding: 0.9rem 2.2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.task-detail-actions button:hover {
+  background: #e65100;
+}

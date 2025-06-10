@@ -7,16 +7,13 @@ import { CommonModule } from '@angular/common';
   templateUrl: './formulario-dinamico.html',
   styleUrls: ['./formulario-dinamico.css'],
   standalone: true,
-  // 👇 ¡Agrega estos imports!
   imports: [CommonModule, ReactiveFormsModule]
 })
 export class FormularioDinamicoComponent implements OnInit, OnChanges {
   @Input() campos: any[] = [];
   @Input() valoresIniciales: any = {};
   @Input() titulo: string = '';
-  @Input() tabs: string[] = ['Formulario'];
-  @Input() selectedTab: number = 0;
-
+  @Input() formularioId: number | string = '';
   formulario!: FormGroup;
   archivos: { [campo: string]: File | null } = {};
 
@@ -75,15 +72,4 @@ export class FormularioDinamicoComponent implements OnInit, OnChanges {
       this.archivos[campoNombre] = input.files[0];
     }
   }
-
-  completar() {
-    if (this.formulario.invalid) {
-      this.formulario.markAllAsTouched();
-      return;
-    }
-    console.log('Datos del formulario:', this.formulario.value, this.archivos);
-  }
-
-  liberar() {}
-  volver() {}
 }

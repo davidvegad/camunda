@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChildren, QueryList, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProcesoService } from '../../../core/services/proceso';
 import { FormularioDinamicoComponent } from '../../formularios/formulario-dinamico/formulario-dinamico'; // Corrige el path
+
 
 @Component({
   selector: 'app-task-detail',
@@ -13,6 +14,7 @@ import { FormularioDinamicoComponent } from '../../formularios/formulario-dinami
   templateUrl: './task-detail.html',
 })
 export class TaskDetailComponent implements OnInit {
+  @ViewChildren(FormularioDinamicoComponent) formulariosDinamicos!: QueryList<FormularioDinamicoComponent>;
   task: any = null;
   formFields: any[] = [];
   formData: { [key: string]: any } = {};
@@ -24,6 +26,8 @@ export class TaskDetailComponent implements OnInit {
   mensaje : string = '';
   
   formularios: any[] = [];
+  selectedTab: number = 0; // <-- AQUI ESTABA FALTANDO
+
   respuestas: { [id: string]: any } = {};
   pestanaActiva: number = 0;
 
@@ -59,6 +63,10 @@ export class TaskDetailComponent implements OnInit {
           this.isLoading = false;
         }
       });
+  }
+  
+  cambiarTab(idx: number) {
+    this.selectedTab = idx;
   }
   
   onFormValido(form: any, formulario: any) {
@@ -112,36 +120,39 @@ export class TaskDetailComponent implements OnInit {
   }
   
   completar() {
-    // Puedes hacer validaciones aquí antes de enviar
-    for (const formulario of this.formularios) {
-      if (!this.respuestas[formulario.id]) {
-        alert(`Falta completar el formulario "${formulario.nombre}"`);
-        return;
+    let algunInvalido = false;
+    this.formulariosDinamicos.forEach((formDin, idx) => {
+      formDin.formulario.markAllAsTouched();
+      if (formDin.formulario.invalid) {
+        alert(`Falta completar el formulario "${this.formularios[idx]?.nombre || ''}"`);
+        algunInvalido = true;
       }
-    }
-    // Enviar cada formulario como registro independiente:
+    });
+    if (algunInvalido) return;
+
+    // Recopila todas las respuestas y envía
     const tareaIdCamunda = this.route.snapshot.paramMap.get('id');
     const usuario = 'admin'; // O el usuario autenticado de la sesión
-    for (const formulario of this.formularios) {
+
+    this.formulariosDinamicos.forEach((formDin, idx) => {
       const payload = {
-        formularioId: formulario.id,
-        tareaIdCamunda: tareaIdCamunda,
+        formularioId: this.formularios[idx].id,
+        tareaIdCamunda,
         usuario,
-        valores: this.respuestas[formulario.id]
+        valores: formDin.formulario.value
       };
       this.procesoService.guardarRegistroFormulario(payload).subscribe({
-        next: () => {
-          // Puedes hacer algo aquí, o esperar a que todos terminen para avanzar el proceso en Camunda
-        },
+        next: () => {},
         error: err => {
-          alert(`Error guardando formulario "${formulario.nombre}"`);
+          alert(`Error guardando formulario "${this.formularios[idx]?.nombre || ''}"`);
         }
       });
-    }
+    });
+
     alert('Formularios guardados exitosamente');
-    // Aquí podrías llamar al endpoint para completar la tarea Camunda
-	this.onCompletarTarea();
+    this.onCompletarTarea();
   }
+
   
   onLiberarTarea(): void {
     this.isLoading = true;
@@ -165,6 +176,8 @@ export class TaskDetailComponent implements OnInit {
   }
   
 }
+
+
 
 
 

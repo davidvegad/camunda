@@ -1,72 +1,36 @@
-<div class="form-outer-box">
-  <div class="form-header">
-    <span class="form-icon">📝</span>
-    <span class="form-title">{{ titulo || 'Formulario' }}</span>
-  </div>
-
-  <div class="tabs">
-    <button
-      class="tab-btn"
-      *ngFor="let tab of tabs; let idx = index"
-      [class.active]="selectedTab === idx"
-      (click)="selectedTab = idx"
-    >
-      {{ tab }}
-    </button>
-  </div>
-
-  <form [formGroup]="formulario"  class="form-dos-columnas">
+<form [formGroup]="formulario" class="form-dos-columnas">
+  <div class="form-columns">
     <div class="column" *ngFor="let col of [0, 1]">
       <ng-container *ngFor="let campo of camposPorColumna(col)">
-        <div class="campo-interno" [ngSwitch]="campo.tipo">
+        <div class="campo-row">
           <label [for]="campo.nombreCampo">{{ campo.etiqueta }}</label>
-          
-          <!-- Input text, email, password, number, date -->
-          <input *ngSwitchCase="'text'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo"
-                 [placeholder]="campo.placeholder" type="text">
-          <input *ngSwitchCase="'email'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo"
-                 [placeholder]="campo.placeholder" type="email">
-          <input *ngSwitchCase="'number'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo"
-                 [placeholder]="campo.placeholder" type="number">
-          <input *ngSwitchCase="'password'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo"
-                 [placeholder]="campo.placeholder" type="password">
-          <input *ngSwitchCase="'date'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo"
-                 [placeholder]="campo.placeholder" type="date">
-          <input *ngSwitchCase="'file'" [id]="campo.nombreCampo" type="file"
-                 (change)="onFileChange($event, campo.nombreCampo)">
-          
-          <!-- Checkbox -->
-          <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo">
-          
-          <!-- Radio -->
-          <div *ngSwitchCase="'radio'" class="radio-group">
-            <label class="radio-option" *ngFor="let opt of opcionesCampo(campo)">
-              <input type="radio" [formControlName]="campo.nombreCampo" [value]="opt.value"> {{ opt.label }}
-            </label>
+          <div class="campo-interno" [ngSwitch]="campo.tipo">
+            <input *ngSwitchCase="'text'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo" type="text" [placeholder]="campo.placeholder" />
+            <input *ngSwitchCase="'email'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo" type="email" [placeholder]="campo.placeholder" />
+            <input *ngSwitchCase="'number'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo" type="number" [placeholder]="campo.placeholder" />
+            <input *ngSwitchCase="'password'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo" type="password" [placeholder]="campo.placeholder" />
+            <input *ngSwitchCase="'date'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo" type="date" [placeholder]="campo.placeholder" />
+            <input *ngSwitchCase="'file'" [id]="campo.nombreCampo" type="file" (change)="onFileChange($event, campo.nombreCampo)" />
+            <input *ngSwitchCase="'checkbox'" type="checkbox" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo" />
+            <div *ngSwitchCase="'radio'" class="radio-group">
+              <label class="radio-option" *ngFor="let opt of opcionesCampo(campo)">
+                <input type="radio" [formControlName]="campo.nombreCampo" [value]="opt.value" /> {{ opt.label }}
+              </label>
+            </div>
+            <select *ngSwitchCase="'select'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo">
+              <option value="">Seleccione...</option>
+              <option *ngFor="let opt of opcionesCampo(campo)" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+            <select *ngSwitchCase="'multiselect'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo" multiple>
+              <option *ngFor="let opt of opcionesCampo(campo)" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+            <textarea *ngSwitchCase="'textarea'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo" [placeholder]="campo.placeholder"></textarea>
           </div>
-          
-          <!-- Select -->
-          <select *ngSwitchCase="'select'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo">
-            <option value="">Seleccione...</option>
-            <option *ngFor="let opt of opcionesCampo(campo)" [value]="opt.value">{{ opt.label }}</option>
-          </select>
-          
-          <!-- Multiselect -->
-          <select *ngSwitchCase="'multiselect'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo" multiple>
-            <option *ngFor="let opt of opcionesCampo(campo)" [value]="opt.value">{{ opt.label }}</option>
-          </select>
-          
-          <!-- Textarea -->
-          <textarea *ngSwitchCase="'textarea'" [formControlName]="campo.nombreCampo" [id]="campo.nombreCampo"
-                    [placeholder]="campo.placeholder"></textarea>
-
-          <!-- Error -->
           <div class="error" *ngIf="getError(campo)">
             {{ getError(campo) }}
           </div>
         </div>
       </ng-container>
     </div>
-  </form>
-
-</div>
+  </div>
+</form>
