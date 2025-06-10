@@ -1,74 +1,27 @@
-<div *ngIf="task && !isLoading">
-  <hr>
-  <h3>Completar Tarea (Formulario Dinámico)</h3>
-  <div *ngIf="formFields.length > 0" class="form-container">
-    <div *ngFor="let field of formFields" class="form-group">
-      <label [for]="field.id">{{ field.label || field.id }}: </label>
+<div *ngIf="isLoading">Cargando formularios...</div>
+<div *ngIf="!isLoading && formularios.length > 0">
+  <!-- Pestañas -->
+  <ul class="tabs">
+    <li *ngFor="let f of formularios; let i = index"
+        [class.active]="i === pestanaActiva"
+        (click)="pestanaActiva = i">
+      {{ f.nombre }}
+    </li>
+  </ul>
 
-      <ng-container [ngSwitch]="field.type">
-        <textarea *ngSwitchCase="'string'" 
-                  [id]="field.id" 
-                  [(ngModel)]="formData[field.id]" 
-                  class="form-control" rows="3"></textarea>
-        <input *ngSwitchCase="'long'" 
-               type="number" 
-               [id]="field.id" 
-               [(ngModel)]="formData[field.id]" 
-               class="form-control">
-        <input *ngSwitchCase="'integer'" 
-               type="number" 
-               [id]="field.id" 
-               [(ngModel)]="formData[field.id]" 
-               class="form-control">
-         <input *ngSwitchCase="'short'" 
-               type="number" 
-               [id]="field.id" 
-               [(ngModel)]="formData[field.id]" 
-               class="form-control">
-        <input *ngSwitchCase="'double'" 
-               type="number" 
-               step="any" [id]="field.id" 
-               [(ngModel)]="formData[field.id]" 
-               class="form-control">
-
-        <input *ngSwitchCase="'boolean'" 
-               type="checkbox" 
-               [id]="field.id" 
-               [(ngModel)]="formData[field.id]" 
-               class="form-check-input">
-        
-        <input *ngSwitchCase="'date'" 
-               type="date" 
-               [id]="field.id" 
-               [ngModel]="formData[field.id] | date:'yyyy-MM-dd'" (ngModelChange)="formData[field.id] = $event" class="form-control">
-
-        <input *ngSwitchDefault 
-               type="text" 
-               [id]="field.id" 
-               [(ngModel)]="formData[field.id]" 
-               class="form-control"
-               placeholder="Tipo: {{ field.type }}">
-      </ng-container>
+  <!-- Formularios -->
+  <div *ngFor="let formulario of formularios; let idx = index">
+    <div *ngIf="pestanaActiva === idx">
+      <formulario-dinamico
+        [campos]="formulario.campos"
+        (formularioValido)="onFormValido($event, formulario)">
+      </formulario-dinamico>
     </div>
   </div>
-  <div *ngIf="formFields.length === 0 && !isLoading && !errorMensaje"> <p>No hay campos de formulario definidos para esta tarea.</p>
-  </div>
-  
-  <button (click)="onCompletarTarea()" [disabled]="isLoading || formFields.length === 0" class="btn btn-primary">
-    {{ isLoading ? 'Completando...' : 'Completar Tarea' }}
-  </button>
-  
-  <button (click)="onLiberarTarea()" [disabled]="isLoading || !task.asignado" class="btn btn-secondary" style="margin-left: 10px;"> {{ isLoading ? 'Liberando...' : 'Liberar Tarea' }}
-</button>
-<div *ngIf="releaseMessage" class="feedback-message success" style="margin-top: 10px;">
-  {{ releaseMessage }}
-</div>
-<div *ngIf="releaseError" class="feedback-message error" style="margin-top: 10px;">
-  {{ releaseError }}
 
-  
+  <div class="acciones">
+    <button (click)="completar()">Completar</button>
+    <button (click)="onLiberarTarea()"> Liberar </button>
+    <button (click)="onVolver()"> Volver </button>
   </div>
-  
-  <div *ngIf="mensaje" style="color: green; margin-top: 1em;">
-  {{ mensaje }}
 </div>

@@ -84,6 +84,14 @@ liberarTarea(id: string): Observable<any> {
     { userId },
     { responseType: 'text' }
   );
-}
+  }
+  
+  obtenerFormulariosPorTarea(procesoKey: string, taskDefinitionKey: string) {
+    return this.http.get<any[]>(`http://localhost:8080/api/formularios/tarea/${procesoKey}/${taskDefinitionKey}`);
+  }
+
+  guardarRegistroFormulario(payload: any) {
+    return this.http.post('http://localhost:8080/api/formularios/registro', payload);
+  }
 
 }

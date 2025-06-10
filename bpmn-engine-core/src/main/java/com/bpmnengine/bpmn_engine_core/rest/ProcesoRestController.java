@@ -25,6 +25,7 @@ import com.bpmnengine.negocio.servicio.BusinessKeyService;
 import org.camunda.bpm.engine.TaskService;
 
 import com.bpmnengine.bpmn_engine_core.dto.TareaDetalleDto;
+import com.bpmnengine.bpmn_engine_core.dto.TareaSimpleDto;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -144,37 +145,36 @@ public class ProcesoRestController {
 		}
 	}
 
-	@GetMapping("/tareas")
-	public ResponseEntity<List<TareaSimpleDto>> obtenerTareas(@RequestParam(required = false) String asignado) {
-		try {
-			List<Task> tareas;
-
-			if (asignado != null && !asignado.isEmpty()) {
-				List<String> grupos = identityService.createGroupQuery().groupMember(asignado).list().stream()
-						.map(Group::getId).collect(Collectors.toList());
-
-				TaskQuery query = taskService.createTaskQuery().or().taskAssignee(asignado).taskCandidateUser(asignado);
-
-				for (String grupo : grupos) {
-					query = query.taskCandidateGroup(grupo);
-				}
-
-				tareas = query.endOr().active().orderByTaskCreateTime().desc().list();
-			} else {
-				tareas = taskService.createTaskQuery().active().orderByTaskCreateTime().desc().list();
-			}
-
-			List<TareaSimpleDto> tareasDto = tareas.stream()
-					.map(task -> new TareaSimpleDto(task.getId(), task.getName(), task.getAssignee(),
-							task.getCreateTime(), task.getProcessInstanceId(), task.getAssignee() != null))
-					.collect(Collectors.toList());
-
-			return ResponseEntity.ok(tareasDto);
-		} catch (Exception e) {
-			LOGGER.error("Error al obtener tareas: {}", e.getMessage(), e);
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyList());
-		}
-	}
+	/*
+	 * @GetMapping("/tareas") public ResponseEntity<List<TareaSimpleDto>>
+	 * obtenerTareas(@RequestParam(required = false) String asignado) { try {
+	 * List<Task> tareas;
+	 * 
+	 * if (asignado != null && !asignado.isEmpty()) { List<String> grupos =
+	 * identityService.createGroupQuery().groupMember(asignado).list().stream()
+	 * .map(Group::getId).collect(Collectors.toList());
+	 * 
+	 * TaskQuery query =
+	 * taskService.createTaskQuery().or().taskAssignee(asignado).taskCandidateUser(
+	 * asignado);
+	 * 
+	 * for (String grupo : grupos) { query = query.taskCandidateGroup(grupo); }
+	 * 
+	 * tareas = query.endOr().active().orderByTaskCreateTime().desc().list(); } else
+	 * { tareas =
+	 * taskService.createTaskQuery().active().orderByTaskCreateTime().desc().list();
+	 * }
+	 * 
+	 * List<TareaSimpleDto> tareasDto = tareas.stream() .map(task -> new
+	 * TareaSimpleDto(task.getId(), task.getName(), task.getAssignee(),
+	 * task.getCreateTime(), task.getProcessInstanceId(), task.getAssignee() !=
+	 * null)) .collect(Collectors.toList());
+	 * 
+	 * return ResponseEntity.ok(tareasDto); } catch (Exception e) {
+	 * LOGGER.error("Error al obtener tareas: {}", e.getMessage(), e); return
+	 * ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.
+	 * emptyList()); } }
+	 */
 
 	@GetMapping("/tarea/{taskId}")
 	public ResponseEntity<TareaSimpleDto> obtenerTareaPorId(@PathVariable String taskId) {
@@ -185,8 +185,13 @@ public class ProcesoRestController {
 				LOGGER.warn("Tarea no encontrada con ID: {}", taskId);
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 			}
+			ProcessDefinition def = repositoryService.createProcessDefinitionQuery()
+				    .processDefinitionId(task.getProcessDefinitionId())
+				    .singleResult();
+				String processDefinitionKey = def != null ? def.getKey() : null;
+
 			TareaSimpleDto tareaDto = new TareaSimpleDto(task.getId(), task.getName(), task.getAssignee(),
-					task.getCreateTime(), task.getProcessInstanceId(), task.getAssignee() != null);
+					task.getCreateTime(), task.getProcessInstanceId(), task.getAssignee() != null,processDefinitionKey,task.getTaskDefinitionKey());
 			return ResponseEntity.ok(tareaDto);
 		} catch (Exception e) {
 			LOGGER.error("Error al obtener la tarea {}: {}", taskId, e.getMessage(), e);
@@ -499,25 +504,6 @@ public class ProcesoRestController {
 
 }
 
-class TareaSimpleDto {
-	public String id;
-	public String nombre;
-	public String asignado;
-	public Date fechaCreacion;
-	public String processInstanceId;
-	public boolean reclamada;
-
-	public TareaSimpleDto(String id, String nombre, String asignado, Date fechaCreacion, String processInstanceId,
-			boolean reclamada) {
-		this.id = id;
-		this.nombre = nombre;
-		this.asignado = asignado;
-		this.fechaCreacion = fechaCreacion;
-		this.processInstanceId = processInstanceId;
-		this.reclamada = reclamada;
-	}
-
-}
 
 class UserIdDto {
 	private String userId;

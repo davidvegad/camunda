@@ -17,7 +17,7 @@ export const routes: Routes = [
           import('./features/process/proceso-inicio/proceso-inicio').then(m => m.ProcesoInicioComponent)
       },
 	  {
-		path: 'task-detail/:id',
+		path: 'task-detail/:id/:procesoKey/:taskDefinitionKey',
 		loadComponent: () =>
 		  import('./features/task/task-detail/task-detail').then(m => m.TaskDetailComponent)
 	  },

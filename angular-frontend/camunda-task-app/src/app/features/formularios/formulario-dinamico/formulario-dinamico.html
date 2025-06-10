@@ -1,0 +1,27 @@
+<form [formGroup]="formulario">
+  <ng-container *ngFor="let campo of campos">
+    <div *ngIf="campo.visible !== false">
+      <label [for]="campo.nombreCampo">{{ campo.etiqueta }}</label>
+      <input *ngIf="campo.tipo === 'text' || campo.tipo === 'email'"
+             [type]="campo.tipo"
+             [formControlName]="campo.nombreCampo"
+             [placeholder]="campo.placeholder" />
+
+      <select *ngIf="campo.tipo === 'select'" [formControlName]="campo.nombreCampo">
+        <option *ngFor="let opt of (campo.opciones ? campo.opciones.split(',') : [])" [value]="opt">
+          {{ opt }}
+        </option>
+      </select>
+
+      <textarea *ngIf="campo.tipo === 'textarea'" [formControlName]="campo.nombreCampo"
+                [placeholder]="campo.placeholder"></textarea>
+
+      <!-- Puedes añadir otros tipos aquí -->
+
+      <div class="error" *ngIf="getError(campo)">
+        {{ getError(campo) }}
+      </div>
+    </div>
+  </ng-container>
+</form>
+

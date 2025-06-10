@@ -40,8 +40,6 @@ export class BandejaTareasComponent implements OnInit {
   filtroTareaUsuario: string = '';
   
   listaProcesos: any[] = [];
-
-  
   
   constructor(private procesoService: ProcesoService, private router: Router) {}
 
@@ -128,11 +126,6 @@ export class BandejaTareasComponent implements OnInit {
     this.cargarTareas();
   }
   
-  verDetalle(tarea: any) {
-  // Aquí irá la navegación o acción para ver el detalle de la tarea.
-  // Por ahora, solo imprime en consola.
-  console.log('Ver detalle:', tarea);
-}
 
 cambiarPagina(nuevaPagina: number) {
   this.paginaActual = nuevaPagina;
@@ -142,17 +135,36 @@ cambiarPagina(nuevaPagina: number) {
 
 
   verTarea(tarea: any): void {
-    this.procesoService.reclamarTarea(tarea.id, this.usuario).subscribe({
+	  //this.verDetalle(tarea);
+	  this.procesoService.obtenerTareaDetalle(tarea.id).subscribe(detalle => {
+      const procesoKey = detalle.processDefinitionKey;
+      const taskDefinitionKey = detalle.taskDefinitionKey;
+	  this.procesoService.reclamarTarea(tarea.id, this.usuario).subscribe({
       next: () => {
-        this.router.navigate(['/task-detail', tarea.id]);
+		  this.router.navigate(['/task-detail', tarea.id,procesoKey,taskDefinitionKey]);
+	      console.log('Ver detalle:', tarea);     
       },
       error: (err: any) => {
         if (err.status === 409) {
-          this.router.navigate(['/task-detail', tarea.id]);
+          this.router.navigate(['/task-detail', tarea.id,procesoKey,taskDefinitionKey]);
         } else {
           window.alert('No se pudo reclamar la tarea: ' + (err?.error || err.message || err));
         }
       }
     });
+	  });
+	  
+	  
+    
   }
+  
+  verDetalle(tarea: any) {
+  // Aquí irá la navegación o acción para ver el detalle de la tarea.
+  // Por ahora, solo imprime en consola.
+  /*this.procesoService.obtenerTareaDetalle(tarea.id).subscribe(detalle => {
+  this.procesoKey = detalle.processDefinitionKey;
+  this.taskDefinitionKey = detalle.taskDefinitionKey;
+
+  }); */
+ }
 }
