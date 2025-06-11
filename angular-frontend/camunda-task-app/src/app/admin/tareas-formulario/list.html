@@ -1,0 +1,37 @@
+<h4>Tareas asociadas a este formulario</h4>
+<div *ngIf="loading">Cargando tareas...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<table *ngIf="!loading && tareas.length > 0">
+  <thead>
+    <tr>
+      <th>Proceso Key</th>
+      <th>Task Key</th>
+      <th>Orden Tab</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let t of tareas">
+      <td>{{ t.procesoKey }}</td>
+      <td>{{ t.taskDefinitionKey }}</td>
+      <td>{{ t.ordenTab }}</td>
+      <td>
+        <button (click)="eliminar(t.id!)">Quitar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="!loading && tareas.length === 0">
+  No hay tareas asociadas a este formulario.
+</div>
+
+<!-- Bloque para asociar una nueva tarea -->
+<h5>Asociar a nueva tarea</h5>
+<div class="asociar-form">
+  <input placeholder="Proceso Key" [(ngModel)]="procesoKey">
+  <input placeholder="Task Key" [(ngModel)]="taskDefinitionKey">
+  <input type="number" placeholder="Orden Tab" [(ngModel)]="ordenTab" min="1">
+  <button (click)="agregar()">Asociar</button>
+</div>

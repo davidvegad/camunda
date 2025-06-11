@@ -29,3 +29,9 @@
   <h3>Campos del formulario</h3>
   <campos-formulario-list [formularioId]="formularioId"></campos-formulario-list>
 </div>
+
+<div *ngIf="isEdit && formularioId">
+  <h3>Tareas asociadas</h3>
+  <tareas-formulario-list [formularioId]="formularioId"></tareas-formulario-list>
+</div>
+

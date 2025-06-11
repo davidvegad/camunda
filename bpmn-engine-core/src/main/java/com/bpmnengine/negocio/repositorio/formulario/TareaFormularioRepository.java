@@ -1,6 +1,7 @@
 package com.bpmnengine.negocio.repositorio.formulario;
 
 import com.bpmnengine.negocio.entidad.formulario.TareaFormulario;
+import com.bpmnengine.negocio.entidad.formulario.Formulario;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -14,4 +15,6 @@ public interface TareaFormularioRepository extends JpaRepository<TareaFormulario
 
     // Verificar si un formulario ya está asignado a una tarea
     boolean existsByProcesoKeyAndTaskDefinitionKeyAndFormularioId(String procesoKey, String taskDefinitionKey, Long formularioId);
+    
+    List<TareaFormulario> findByFormulario(Formulario formulario);
 }

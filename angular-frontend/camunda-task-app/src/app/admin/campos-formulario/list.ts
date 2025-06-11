@@ -1,12 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; // <-- IMPORTANTE
 import { CampoFormularioService } from './campo-formulario.service';
 import { CampoFormulario } from './campo-formulario.model';
 
 @Component({
   selector: 'campos-formulario-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [FormsModule,CommonModule],
   templateUrl: './list.html',
   styleUrls: ['./list.css']
 })
