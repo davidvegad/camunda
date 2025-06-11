@@ -1,0 +1,38 @@
+<div *ngIf="loading">Cargando...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<table *ngIf="!loading && campos.length > 0">
+  <thead>
+    <tr>
+      <th>Orden</th>
+      <th>Campo</th>
+      <th>Etiqueta</th>
+      <th>Requerido</th>
+      <th>Visible</th>
+      <th>Valor por defecto</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let c of campos">
+      <td>{{ c.orden }}</td>
+      <td>{{ c.nombreCampo }}</td>
+      <td>{{ c.etiquetaCampo }}</td>
+      <td>
+        <input type="checkbox" [checked]="c.requerido" disabled>
+      </td>
+      <td>
+        <input type="checkbox" [checked]="c.visible" disabled>
+      </td>
+      <td>{{ c.valorPorDefecto }}</td>
+      <td>
+        <button (click)="eliminarCampo(c.id!)">Quitar</button>
+        <!-- Puedes agregar aquí botones para cambiar orden, editar, etc. -->
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="!loading && campos.length === 0">
+  No hay campos asociados aún.
+</div>

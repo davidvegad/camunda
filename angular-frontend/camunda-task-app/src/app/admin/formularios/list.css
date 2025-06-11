@@ -1,0 +1,8 @@
+.sidebar ul .submenu {
+  margin-left: 1.5em;
+  list-style-type: disc;
+}
+.admin-menu-title {
+  font-weight: bold;
+  cursor: pointer;
+}

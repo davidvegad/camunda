@@ -1,0 +1,57 @@
+<h2 *ngIf="!isEdit">Nuevo Campo</h2>
+<h2 *ngIf="isEdit">Editar Campo</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="form">
+  <label>
+    Nombre técnico:<br>
+    <input formControlName="nombreCampo">
+  </label>
+  <div *ngIf="form.get('nombreCampo')?.invalid && form.get('nombreCampo')?.touched" class="error">
+    El nombre es requerido.
+  </div>
+
+  <label>
+    Etiqueta para usuario:<br>
+    <input formControlName="etiqueta">
+  </label>
+  <div *ngIf="form.get('etiqueta')?.invalid && form.get('etiqueta')?.touched" class="error">
+    La etiqueta es requerida.
+  </div>
+
+  <label>
+    Tipo:<br>
+    <select formControlName="tipo">
+      <option value="text">Texto</option>
+      <option value="number">Número</option>
+      <option value="date">Fecha</option>
+      <option value="select">Lista</option>
+      <option value="textarea">Textarea</option>
+      <!-- Agrega más si necesitas -->
+    </select>
+  </label>
+
+  <label>
+    Placeholder:<br>
+    <input formControlName="placeholder">
+  </label>
+
+  <label>
+    Opciones (solo para lista, separa por coma):<br>
+    <input formControlName="opciones">
+  </label>
+
+  <label>
+    Expresión de validación (regex):<br>
+    <input formControlName="validacionRegex">
+  </label>
+
+  <label>
+    Mensaje de error:<br>
+    <input formControlName="mensajeError">
+  </label>
+
+  <br>
+  <button type="submit" [disabled]="form.invalid">{{ isEdit ? 'Actualizar' : 'Crear' }}</button>
+  <button type="button" (click)="volver()">Cancelar</button>
+  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="success" class="success">{{ success }}</div>
+</form>

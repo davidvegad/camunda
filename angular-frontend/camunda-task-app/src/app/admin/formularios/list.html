@@ -1,0 +1,28 @@
+<h2>Formularios</h2>
+<a [routerLink]="['/admin/formularios/nuevo']">Nuevo Formulario</a>
+
+<div *ngIf="loading">Cargando...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<table *ngIf="!loading && formularios.length > 0">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Descripción</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let f of formularios">
+      <td>{{ f.nombre }}</td>
+      <td>{{ f.descripcion }}</td>
+      <td>
+        <a [routerLink]="['/admin/formularios', f.id]">Editar</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="!loading && formularios.length === 0">
+  No hay formularios registrados.
+</div>

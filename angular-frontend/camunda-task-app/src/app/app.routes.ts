@@ -21,6 +21,36 @@ export const routes: Routes = [
 				loadComponent: () =>
 				import('./features/task/task-detail/task-detail').then(m => m.TaskDetailComponent)
 			},
+			{
+				path: 'admin',
+				children: [
+					{
+						path: 'formularios',
+						loadComponent: () => import('./admin/formularios/list').then(m => m.list)
+					},
+					{
+						path: 'formularios/nuevo',
+						loadComponent: () => import('./admin/formularios/edit').then(m => m.edit)
+					},
+					{
+						path: 'formularios/:id',
+						loadComponent: () => import('./admin/formularios/edit').then(m => m.edit)
+					},
+					{
+						path: 'campos',
+						loadComponent: () => import('./admin/campos/list').then(m => m.list)
+					},
+					{
+						path: 'campos/nuevo',
+						loadComponent: () => import('./admin/campos/edit').then(m => m.edit)
+					},
+					{
+						path: 'campos/:id',
+						loadComponent: () => import('./admin/campos/edit').then(m => m.edit)
+					},
+					{ path: '', redirectTo: 'formularios', pathMatch: 'full' }
+				]
+			},
 			{ path: '', redirectTo: '/bandeja-tareas', pathMatch: 'full' }
 		]
 	}

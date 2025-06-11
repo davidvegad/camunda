@@ -1,0 +1,18 @@
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 1em;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 0.5em;
+}
+
+th {
+  background: #f4f4f4;
+  text-align: left;
+}
+.error {
+  color: #c00;
+}

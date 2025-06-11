@@ -1,0 +1,30 @@
+<h2>Campos</h2>
+<a [routerLink]="['/admin/campos/nuevo']">Nuevo Campo</a>
+
+<div *ngIf="loading">Cargando...</div>
+<div *ngIf="error" class="error">{{ error }}</div>
+
+<table *ngIf="!loading && campos.length > 0">
+  <thead>
+    <tr>
+      <th>Nombre Técnico</th>
+      <th>Etiqueta</th>
+      <th>Tipo</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let c of campos">
+      <td>{{ c.nombreCampo }}</td>
+      <td>{{ c.etiqueta }}</td>
+      <td>{{ c.tipo }}</td>
+      <td>
+        <a [routerLink]="['/admin/campos', c.id]">Editar</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div *ngIf="!loading && campos.length === 0">
+  No hay campos registrados.
+</div>
