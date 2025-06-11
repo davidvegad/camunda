@@ -93,6 +93,68 @@ public class FormularioService {
     }
 
     // ...más lógica de negocio según vayas requiriendo.
+    
+    /** Listar todos los formularios (devuelve lista de DTOs) */
+    public List<FormularioDto> findAll() {
+        List<Formulario> formularios = formularioRepository.findAll();
+        List<FormularioDto> dtos = new ArrayList<>();
+        for (Formulario f : formularios) {
+            FormularioDto dto = new FormularioDto();
+            dto.setId(f.getId());
+            dto.setNombre(f.getNombre());
+            dto.setDescripcion(f.getDescripcion());
+            // Puedes agregar más mapeo según tu necesidad
+            dtos.add(dto);
+        }
+        return dtos;
+    }
+
+
+    /** Buscar un formulario por su ID (devuelve DTO) */
+    public FormularioDto findById(Long id) {
+        Formulario f = formularioRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Formulario no encontrado: " + id));
+        FormularioDto dto = new FormularioDto();
+        dto.setId(f.getId());
+        dto.setNombre(f.getNombre());
+        dto.setDescripcion(f.getDescripcion());
+        // Puedes mapear los campos si necesitas
+        return dto;
+    }
+
+    /** Guardar o actualizar un formulario */
+    public FormularioDto save(FormularioDto dto) {
+        Formulario formulario;
+        if (dto.getId() != null) {
+            // Editar existente
+            formulario = formularioRepository.findById(dto.getId())
+                .orElse(new Formulario());
+        } else {
+            // Nuevo formulario
+            formulario = new Formulario();
+        }
+        formulario.setNombre(dto.getNombre());
+        formulario.setDescripcion(dto.getDescripcion());
+        // Guarda la entidad
+        Formulario guardado = formularioRepository.save(formulario);
+
+        // Retorna DTO actualizado
+        FormularioDto resultDto = new FormularioDto();
+        resultDto.setId(guardado.getId());
+        resultDto.setNombre(guardado.getNombre());
+        resultDto.setDescripcion(guardado.getDescripcion());
+        return resultDto;
+    }
+
+    /** Eliminar formulario por ID */
+    public void delete(Long id) {
+        if (!formularioRepository.existsById(id)) {
+            throw new IllegalArgumentException("Formulario no existe: " + id);
+        }
+        formularioRepository.deleteById(id);
+    }
+
+    
     public List<FormularioDto> obtenerDtosFormulariosDeTarea(String procesoKey, String taskDefinitionKey) {
         List<TareaFormulario> tareasForm = tareaFormularioRepository.findByProcesoKeyAndTaskDefinitionKeyOrderByOrdenTabAsc(procesoKey, taskDefinitionKey);
 
@@ -133,5 +195,5 @@ public class FormularioService {
         return resultado;
     }
 
-
 }
+

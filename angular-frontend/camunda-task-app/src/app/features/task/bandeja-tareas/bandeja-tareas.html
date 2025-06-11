@@ -1,119 +1,119 @@
 <div class="bandeja-container">
 
-  <!-- Tabs para Filtros -->
-  <div class="tabs-filtros">
-    <div [class.active]="filtroActivo === 'proceso'" (click)="filtroActivo = 'proceso'">Proceso</div>
-    <div [class.active]="filtroActivo === 'tarea'" (click)="filtroActivo = 'tarea'">Tarea</div>
-  </div>
+	<!-- Tabs para Filtros -->
+	<div class="tabs-filtros">
+		<div [class.active]="filtroActivo === 'proceso'" (click)="filtroActivo = 'proceso'">Proceso</div>
+		<div [class.active]="filtroActivo === 'tarea'" (click)="filtroActivo = 'tarea'">Tarea</div>
+	</div>
 
-  <!-- Filtros de Proceso -->
-  <div *ngIf="filtroActivo === 'proceso'" class="panel-filtro">
-    <label>
+	<!-- Filtros de Proceso -->
+	<div *ngIf="filtroActivo === 'proceso'" class="panel-filtro">
+		<label>
   Proceso:
-  <select [(ngModel)]="filtroProceso">
-    <option value="">Todos los procesos</option>
-    <option *ngFor="let proc of listaProcesos" [value]="proc.name">
+			<select [(ngModel)]="filtroProceso">
+				<option value="">Todos los procesos</option>
+				<option *ngFor="let proc of listaProcesos" [value]="proc.name">
       {{ proc.name }}
-    </option>
-  </select>
-</label>
+				</option>
+			</select>
+		</label>
 
-    <label>
+		<label>
       Business Key:
-      <input [(ngModel)]="filtroBusinessKey" placeholder="Business Key" />
-    </label>
-    <label>
+			<input [(ngModel)]="filtroBusinessKey" placeholder="Business Key"/>
+		</label>
+		<label>
       Fecha desde:
-      <input type="date" [(ngModel)]="filtroProcFechaDesde" />
-    </label>
-    <label>
+			<input type="date" [(ngModel)]="filtroProcFechaDesde"/>
+		</label>
+		<label>
       Fecha hasta:
-      <input type="date" [(ngModel)]="filtroProcFechaHasta" />
-    </label>
-    <button type="button" (click)="aplicarFiltros()">Buscar</button>
-    <button type="button" class="btn-limpiar" (click)="limpiarFiltros()">Limpiar</button>
-  </div>
+			<input type="date" [(ngModel)]="filtroProcFechaHasta"/>
+		</label>
+		<button type="button" (click)="aplicarFiltros()">Buscar</button>
+		<button type="button" class="btn-limpiar" (click)="limpiarFiltros()">Limpiar</button>
+	</div>
 
-  <!-- Filtros de Tarea -->
-  <div *ngIf="filtroActivo === 'tarea'" class="panel-filtro">
-    <label>
+	<!-- Filtros de Tarea -->
+	<div *ngIf="filtroActivo === 'tarea'" class="panel-filtro">
+		<label>
       Nombre:
-      <input [(ngModel)]="filtroTareaNombre" placeholder="Nombre de la tarea" />
-      <!-- O usa un <select> si tienes un listado de tareas -->
-    </label>
-    <label>
+			<input [(ngModel)]="filtroTareaNombre" placeholder="Nombre de la tarea"/>
+			<!-- O usa un <select> si tienes un listado de tareas -->
+		</label>
+		<label>
       Estado:
-      <select [(ngModel)]="filtroTareaEstado">
-        <option value="">Todos</option>
-        <option value="reservada">Reservada</option>
-      </select>
-    </label>
-    <label>
+			<select [(ngModel)]="filtroTareaEstado">
+				<option value="">Todos</option>
+				<option value="reservada">Reservada</option>
+			</select>
+		</label>
+		<label>
       Periodo:
-      <select [(ngModel)]="filtroTareaPeriodo">
-        <option value="">- Seleccione periodo -</option>
-        <option value="hoy">Hoy</option>
-        <option value="ayer">Ayer</option>
-        <option value="semana">Última semana</option>
-        <option value="mes">Último mes</option>
-      </select>
-    </label>
-    <label>
+			<select [(ngModel)]="filtroTareaPeriodo">
+				<option value="">- Seleccione periodo -</option>
+				<option value="hoy">Hoy</option>
+				<option value="ayer">Ayer</option>
+				<option value="semana">Última semana</option>
+				<option value="mes">Último mes</option>
+			</select>
+		</label>
+		<label>
       Fecha desde:
-      <input type="date" [(ngModel)]="filtroTareaFechaDesde" />
-    </label>
-    <label>
+			<input type="date" [(ngModel)]="filtroTareaFechaDesde"/>
+		</label>
+		<label>
       Fecha hasta:
-      <input type="date" [(ngModel)]="filtroTareaFechaHasta" />
-    </label>
-    <label>
+			<input type="date" [(ngModel)]="filtroTareaFechaHasta"/>
+		</label>
+		<label>
       Usuario aceptado:
-      <input [(ngModel)]="filtroTareaUsuario" placeholder="Usuario aceptado" />
-    </label>
-    <button type="button" (click)="aplicarFiltros()">Buscar</button>
-    <button type="button" class="btn-limpiar" (click)="limpiarFiltros()">Limpiar</button>
-  </div>
+			<input [(ngModel)]="filtroTareaUsuario" placeholder="Usuario aceptado"/>
+		</label>
+		<button type="button" (click)="aplicarFiltros()">Buscar</button>
+		<button type="button" class="btn-limpiar" (click)="limpiarFiltros()">Limpiar</button>
+	</div>
 
-  <!-- Resultados -->
-  <div *ngIf="tareas && tareas.length > 0">
-    <table class="table-bandeja">
-      <thead>
-        <tr>
-          <th>Nombre Proceso</th>
-          <th>BusinessKey</th>
-          <th>Nombre</th>
-          <th>Asignado</th>
-          <th>Fecha Creación</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let tarea of tareas">
-          <td>{{ tarea.nombreProceso }}</td>
-          <td>{{ tarea.businessKey }}</td>
-          <td>{{ tarea.nombre }}</td>
-          <td>{{ tarea.asignado || '-' }}</td>
-          <td>{{ tarea.fechaCreacion | date:'dd/MM/yyyy' }}</td>
-          <td>
-            <button class="btn-detalle" type="button" (click)="verTarea(tarea)">
-              Detalle <span style="font-size:16px;vertical-align:middle;">🔎</span>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+	<!-- Resultados -->
+	<div *ngIf="tareas && tareas.length > 0">
+		<table class="table-bandeja">
+			<thead>
+				<tr>
+					<th>Nombre Proceso</th>
+					<th>BusinessKey</th>
+					<th>Nombre</th>
+					<th>Asignado</th>
+					<th>Fecha Creación</th>
+					<th>Acción</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr *ngFor="let tarea of tareas">
+					<td>{{ tarea.nombreProceso }}</td>
+					<td>{{ tarea.businessKey }}</td>
+					<td>{{ tarea.nombre }}</td>
+					<td>{{ tarea.asignado || '-' }}</td>
+					<td>{{ tarea.fechaCreacion | date:'dd/MM/yyyy' }}</td>
+					<td>
+						<button class="btn-detalle" type="button" (click)="verTarea(tarea)">
+              Detalle							<span style="font-size:16px;vertical-align:middle;">🔎</span>
+						</button>
+					</td>
+				</tr>
+			</tbody>
+		</table>
 
-    <!-- Paginación -->
-    <div class="paginacion">
-      <button [disabled]="paginaActual === 1" (click)="paginaAnterior()">Anterior</button>
-      <span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
-      <button [disabled]="paginaActual === totalPaginas" (click)="paginaSiguiente()">Siguiente</button>
-    </div>
-  </div>
+		<!-- Paginación -->
+		<div class="paginacion">
+			<button [disabled]="paginaActual === 1" (click)="paginaAnterior()">Anterior</button>
+			<span>Página {{ paginaActual }} de {{ totalPaginas }}</span>
+			<button [disabled]="paginaActual === totalPaginas" (click)="paginaSiguiente()">Siguiente</button>
+		</div>
+	</div>
 
-  <!-- Mensaje si no hay resultados -->
-  <div *ngIf="tareas && tareas.length === 0" class="sin-tareas">
+	<!-- Mensaje si no hay resultados -->
+	<div *ngIf="tareas && tareas.length === 0" class="sin-tareas">
     No hay tareas para mostrar.
-  </div>
+	</div>
 
 </div>

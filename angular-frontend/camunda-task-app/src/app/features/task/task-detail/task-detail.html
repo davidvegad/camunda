@@ -1,25 +1,25 @@
 <div class="tabs-container">
-  <ul class="tabs-list">
-    <li *ngFor="let formulario of formularios; let idx = index"
-        [class.active]="selectedTab === idx"
-        (click)="cambiarTab(idx)">
+	<ul class="tabs-list">
+		<li *ngFor="let formulario of formularios; let idx = index"
+		    [class.active]="selectedTab === idx"
+		    (click)="cambiarTab(idx)">
       {{ formulario.nombre || 'Formulario ' + (idx+1) }}
-    </li>
-  </ul>
+		</li>
+	</ul>
 
-  <div class="tab-content" *ngIf="formularios.length > 0">
-    <formulario-dinamico
-      *ngFor="let formulario of formularios; let idx = index"
-      [hidden]="selectedTab !== idx"
-      [campos]="formulario.campos"
-      [titulo]="formulario.nombre"
-      [formularioId]="formulario.id">
-    </formulario-dinamico>
-  </div>
+	<div class="tab-content" *ngIf="formularios.length > 0">
+		<formulario-dinamico
+ *ngFor="let formulario of formularios; let idx = index"
+		                     [hidden]="selectedTab !== idx"
+		                     [campos]="formulario.campos"
+		                     [titulo]="formulario.nombre"
+		                     [formularioId]="formulario.id">
+		</formulario-dinamico>
+	</div>
 </div>
 
 <div class="task-detail-actions">
-  <button type="button" (click)="completar()">Completar</button>
-  <button type="button" (click)="onLiberarTarea()">Liberar</button>
-  <button type="button" (click)="onVolver()">Volver</button>
+	<button type="button" (click)="completar()">Completar</button>
+	<button type="button" (click)="onLiberarTarea()">Liberar</button>
+	<button type="button" (click)="onVolver()">Volver</button>
 </div>

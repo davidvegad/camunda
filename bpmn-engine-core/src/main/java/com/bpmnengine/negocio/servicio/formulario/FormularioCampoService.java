@@ -1,0 +1,94 @@
+package com.bpmnengine.negocio.servicio.formulario;
+
+import com.bpmnengine.negocio.dto.formulario.FormularioCampoDto;
+import com.bpmnengine.negocio.dto.formulario.FormularioCampoOrdenDto;
+import com.bpmnengine.negocio.entidad.formulario.*;
+import com.bpmnengine.negocio.repositorio.formulario.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+public class FormularioCampoService {
+
+    @Autowired
+    private FormularioCampoRepository formularioCampoRepository;
+    @Autowired
+    private FormularioRepository formularioRepository;
+    @Autowired
+    private CampoRepository campoRepository;
+
+    // Listar todos los campos de un formulario
+    public List<FormularioCampoDto> findByFormulario(Long formularioId) {
+        Formulario formulario = formularioRepository.findById(formularioId)
+                .orElseThrow(() -> new IllegalArgumentException("Formulario no encontrado: " + formularioId));
+        return formularioCampoRepository.findByFormularioOrderByOrdenAsc(formulario)
+                .stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    // Agregar o actualizar una relación
+    public FormularioCampoDto save(FormularioCampoDto dto) {
+        FormularioCampo fc = dto.getId() != null
+                ? formularioCampoRepository.findById(dto.getId()).orElse(new FormularioCampo())
+                : new FormularioCampo();
+
+        fc.setFormulario(formularioRepository.findById(dto.getFormularioId())
+                .orElseThrow(() -> new IllegalArgumentException("Formulario no encontrado: " + dto.getFormularioId())));
+        fc.setCampo(campoRepository.findById(dto.getCampoId())
+                .orElseThrow(() -> new IllegalArgumentException("Campo no encontrado: " + dto.getCampoId())));
+        fc.setRequerido(dto.getRequerido());
+        fc.setVisible(dto.getVisible());
+        fc.setValorPorDefecto(dto.getValorPorDefecto());
+        fc.setOrden(dto.getOrden());
+
+        FormularioCampo saved = formularioCampoRepository.save(fc);
+        return toDto(saved);
+    }
+
+    // Obtener por ID
+    public FormularioCampoDto findById(Long id) {
+        FormularioCampo fc = formularioCampoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Asociación formulario-campo no encontrada: " + id));
+        return toDto(fc);
+    }
+
+    // Eliminar asociación
+    public void delete(Long id) {
+        if (!formularioCampoRepository.existsById(id)) {
+            throw new IllegalArgumentException("No existe asociación formulario-campo: " + id);
+        }
+        formularioCampoRepository.deleteById(id);
+    }
+
+    // Utilidad: entidad → DTO
+    private FormularioCampoDto toDto(FormularioCampo fc) {
+        FormularioCampoDto dto = new FormularioCampoDto();
+        dto.setId(fc.getId());
+        dto.setFormularioId(fc.getFormulario().getId());
+        dto.setCampoId(fc.getCampo().getId());
+        dto.setRequerido(fc.getRequerido());
+        dto.setVisible(fc.getVisible());
+        dto.setValorPorDefecto(fc.getValorPorDefecto());
+        dto.setOrden(fc.getOrden());
+        // Info adicional
+        dto.setNombreCampo(fc.getCampo().getNombreCampo());
+        dto.setEtiqueta(fc.getCampo().getEtiqueta());
+        return dto;
+    }
+    
+    public void actualizarOrdenCampos(Long formularioId, List<FormularioCampoOrdenDto> ordenDtos) {
+        // Opcional: Validar que todos los IDs pertenezcan al formularioId recibido
+        for (FormularioCampoOrdenDto ordenDto : ordenDtos) {
+            FormularioCampo fc = formularioCampoRepository.findById(ordenDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException("No existe FormularioCampo: " + ordenDto.getId()));
+            if (!fc.getFormulario().getId().equals(formularioId)) {
+                throw new IllegalArgumentException("El campo no pertenece a este formulario");
+            }
+            fc.setOrden(ordenDto.getOrden());
+            formularioCampoRepository.save(fc);
+        }
+    }
+
+}
