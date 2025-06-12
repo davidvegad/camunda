@@ -1,8 +1,16 @@
 package com.bpmnengine.bpmn_engine_core.dto;
 import java.util.Date;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 public class TareaSimpleDto {
-    public String getId() {
+    public TareaSimpleDto() {
+		super();
+	}
+
+	public String getId() {
 		return id;
 	}
 

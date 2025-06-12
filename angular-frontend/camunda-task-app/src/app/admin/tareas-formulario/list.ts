@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+/*import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // <-- IMPORTANTE
 import { TareaFormularioService } from './tarea-formulario.service';
@@ -71,3 +71,4 @@ export class tareasFormularioList implements OnInit {
     }
   }
 }
+*/

@@ -6,13 +6,13 @@ import { FormularioService } from './formulario.service';
 import { Formulario } from './formulario.model';
 // Importa el componente de campos en formulario:
 import {camposFormularioList } from '../campos-formulario/list';
-import {tareasFormularioList } from '../tareas-formulario/list';
+//import {tareasFormularioList } from '../tareas-formulario/list';
 
 
 @Component({
   selector: 'admin-formularios-edit',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, camposFormularioList,tareasFormularioList],
+  imports: [CommonModule, ReactiveFormsModule, camposFormularioList],
   templateUrl: './edit.html',
   styleUrls: ['./edit.css']
 })

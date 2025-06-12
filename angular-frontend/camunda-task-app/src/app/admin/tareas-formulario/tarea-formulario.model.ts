@@ -4,4 +4,5 @@ export interface TareaFormulario {
   taskDefinitionKey: string;
   ordenTab: number;
   formularioId: number;
+  nombreFormulario?: string; // Info para mostrar
 }

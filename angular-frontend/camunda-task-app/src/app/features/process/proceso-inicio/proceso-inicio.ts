@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProcesoService } from '../../../core/services/proceso';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
 	selector: 'app-proceso-inicio',
@@ -15,7 +16,7 @@ export class ProcesoInicioComponent implements OnInit {
 	mensaje: string = '';
 	error: string = '';
 	
-	constructor(private procesoService: ProcesoService) {}
+	constructor(private procesoService: ProcesoService,private http: HttpClient) {}
 	
 	ngOnInit(): void {
 		this.cargarProcesos();
@@ -46,6 +47,32 @@ export class ProcesoInicioComponent implements OnInit {
 			error: (err: any) => {
 				this.mensaje = '';
 				this.error = 'Error al iniciar proceso: ' + (err?.message || err);
+			}
+		});
+	}
+	
+	
+	textoLibre = '';
+	isLoading = false;
+	
+	onSubmit() {
+		this.mensaje = '';
+		this.error = '';
+		if (!this.textoLibre) return;
+		this.isLoading = true;
+		this.http.post('http://localhost:4000/api/chatbot-iniciar-proceso-libre', { texto: this.textoLibre }).subscribe({
+			next: (resp: any) => {
+				this.isLoading = false;
+				if (resp.ok) {
+					this.mensaje = `¡Proceso iniciado correctamente! ID: ${resp.processInstanceId || '(no disponible)'}`;
+					this.textoLibre = '';
+					} else {
+					this.error = 'No se pudo iniciar el proceso.';
+				}
+			},
+			error: (err) => {
+				this.isLoading = false;
+				this.error = err?.error?.error || 'Error al iniciar proceso.';
 			}
 		});
 	}

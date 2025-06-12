@@ -1,0 +1,38 @@
+<h2>Configurar formularios en tarea</h2>
+<div>
+  <strong>Proceso:</strong> {{ procesoKey }}<br>
+  <strong>Tarea:</strong> {{ taskDefinitionKey }}
+</div>
+
+<h3>Formularios asociados</h3>
+<div *ngIf="loading">Cargando...</div>
+<table *ngIf="!loading && tareasFormularios.length > 0">
+  <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Orden</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let tf of tareasFormularios">
+      <td>{{ tf.nombreFormulario }}</td>
+      <td>{{ tf.ordenTab }}</td>
+      <td>
+        <button (click)="eliminar(tf.id!)">Quitar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div *ngIf="!loading && tareasFormularios.length === 0">
+  No hay formularios asociados a esta tarea.
+</div>
+
+<h4>Asociar formulario a esta tarea</h4>
+<select [(ngModel)]="formularioIdSeleccionado">
+  <option [ngValue]="undefined">Selecciona un formulario</option>
+  <option *ngFor="let f of formularios" [value]="f.id">{{ f.nombre }}</option>
+</select>
+<input type="number" placeholder="Orden" [(ngModel)]="ordenTab" min="1" style="width:70px">
+<button (click)="asociar()">Asociar</button>
+<div *ngIf="error" class="error">{{ error }}</div>

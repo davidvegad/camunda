@@ -39,4 +39,9 @@ export class FormularioService {
 	deleteFormulario(id: number): Observable<void> {
 		return this.http.delete<void>(`${this.apiUrl}/${id}`);
 	}
+	/*
+	getTareasDeFormularioPorTarea(procesoKey: string, taskDefinitionKey: string): Observable<TareaFormulario[]> {
+		return this.http.get<TareaFormulario[]>(`${this.apiUrl}?procesoKey=${procesoKey}&taskDefinitionKey=${taskDefinitionKey}`);
+	}
+	*/
 }

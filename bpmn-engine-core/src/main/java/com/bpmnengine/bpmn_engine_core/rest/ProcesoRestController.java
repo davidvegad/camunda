@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.springframework.http.MediaType;
 
 import com.bpmnengine.negocio.servicio.BusinessKeyService;
@@ -32,6 +35,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
+
+import java.util.*;
+
+import org.w3c.dom.*;
 
 @RestController
 @RequestMapping("/api/proceso")
@@ -60,7 +67,41 @@ public class ProcesoRestController {
 
 	@Autowired
 	private BusinessKeyService businessKeyService;
+	
+	@GetMapping("/tareas-bpmn")
+    public List<TareaSimpleDto> listarTareasBpmn() {
+        List<TareaSimpleDto> tareas = new ArrayList<>();
+        List<ProcessDefinition> definiciones = repositoryService.createProcessDefinitionQuery()
+                .latestVersion()
+                .active()
+                .list();
 
+        for (ProcessDefinition def : definiciones) {
+            String procesoKey = def.getKey();
+            String xml = repositoryService.getProcessModel(def.getId()).toString();
+
+            // Leer el XML BPMN para extraer userTask
+            try {
+                Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+                		.parse(repositoryService.getProcessModel(def.getId()));
+                NodeList userTasks = doc.getElementsByTagName("bpmn:userTask");
+                for (int i = 0; i < userTasks.getLength(); i++) {
+                    Element userTask = (Element) userTasks.item(i);
+                    TareaSimpleDto dto = new TareaSimpleDto();
+                    dto.setProcessDefinitionKey(procesoKey);
+                    dto.setTaskDefinitionKey(userTask.getAttribute("id"));
+                    dto.setName(userTask.getAttribute("name"));
+                    tareas.add(dto);
+                }
+            } catch (Exception e) {
+                // Maneja/loguea el error de parseo
+                e.printStackTrace();
+            }
+        }
+        return tareas;
+    }
+
+	/*
 	@PostMapping("/iniciar-con-businesskey/{processDefinitionKey}")
 	public ResponseEntity<String> iniciarProcesoConBusinessKey(@PathVariable String processDefinitionKey) {
 		String businessKey = businessKeyService.generarBusinessKey(processDefinitionKey);
@@ -69,6 +110,44 @@ public class ProcesoRestController {
 
 		return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(businessKey);
 	}
+	*/
+	/*
+	@PostMapping("/iniciar-con-businesskey/{processDefinitionKey}")
+	public ResponseEntity<String> iniciarProcesoConBusinessKey(
+	        @PathVariable String processDefinitionKey,
+	        @RequestBody(required = false) Map<String, Object> variablesBody // ahora el body es opcional
+	) {
+	    String businessKey = businessKeyService.generarBusinessKey(processDefinitionKey);
+
+	    // Si no hay variables, inicia sin variables (como antes)
+	    ProcessInstance instance;
+	    if (variablesBody == null || variablesBody.isEmpty()) {
+	        instance = runtimeService.startProcessInstanceByKey(processDefinitionKey, businessKey);
+	    } else {
+	        // Convierte el map simple a Map<String, Object> de variables de Camunda
+	        // Si quieres usar tipos explícitos, deberías parsear como el formato de Camunda, pero para lo simple:
+	        instance = runtimeService.startProcessInstanceByKey(processDefinitionKey, businessKey, variablesBody);
+	    }
+
+	    return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(businessKey);
+	}
+
+	*/
+	@PostMapping("/iniciar-con-businesskey/{processDefinitionKey}")
+	public ResponseEntity<String> iniciarProcesoConBusinessKey(
+	        @PathVariable String processDefinitionKey,
+	        @RequestBody(required = false) Map<String, Object> variablesBody
+	) {
+	    String businessKey = businessKeyService.generarBusinessKey(processDefinitionKey);
+	    ProcessInstance instance;
+	    if (variablesBody == null || variablesBody.isEmpty()) {
+	        instance = runtimeService.startProcessInstanceByKey(processDefinitionKey, businessKey);
+	    } else {
+	        instance = runtimeService.startProcessInstanceByKey(processDefinitionKey, businessKey, variablesBody);
+	    }
+	    return ResponseEntity.ok().contentType(MediaType.TEXT_PLAIN).body(businessKey);
+	}
+
 
 	@GetMapping("/business-key/{processDefinitionKey}")
 	public String generarBusinessKey(@PathVariable String processDefinitionKey) {

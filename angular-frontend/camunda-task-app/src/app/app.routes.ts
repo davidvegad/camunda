@@ -48,6 +48,19 @@ export const routes: Routes = [
 						path: 'campos/:id',
 						loadComponent: () => import('./admin/campos/edit').then(m => m.edit)
 					},
+					/*{
+						path: 'tareas',
+						children: [
+							{
+								path: '',
+								loadComponent: () => import('./admin/tareas/list').then(m => m.list)
+							},
+							{
+								path: ':procesoKey/:taskDefinitionKey',
+								loadComponent: () => import('./admin/tareas/edit').then(m => m.edit)
+							}
+						]
+					},*/
 					{ path: '', redirectTo: 'formularios', pathMatch: 'full' }
 				]
 			},
