@@ -24,7 +24,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.springframework.http.MediaType;
 
+import com.bpmnengine.negocio.dto.formulario.TareaCabeceraDto;
 import com.bpmnengine.negocio.servicio.BusinessKeyService;
+import com.bpmnengine.negocio.servicio.TareaCabeceraService;
+
 import org.camunda.bpm.engine.TaskService;
 
 import com.bpmnengine.bpmn_engine_core.dto.TareaDetalleDto;
@@ -224,36 +227,6 @@ public class ProcesoRestController {
 		}
 	}
 
-	/*
-	 * @GetMapping("/tareas") public ResponseEntity<List<TareaSimpleDto>>
-	 * obtenerTareas(@RequestParam(required = false) String asignado) { try {
-	 * List<Task> tareas;
-	 * 
-	 * if (asignado != null && !asignado.isEmpty()) { List<String> grupos =
-	 * identityService.createGroupQuery().groupMember(asignado).list().stream()
-	 * .map(Group::getId).collect(Collectors.toList());
-	 * 
-	 * TaskQuery query =
-	 * taskService.createTaskQuery().or().taskAssignee(asignado).taskCandidateUser(
-	 * asignado);
-	 * 
-	 * for (String grupo : grupos) { query = query.taskCandidateGroup(grupo); }
-	 * 
-	 * tareas = query.endOr().active().orderByTaskCreateTime().desc().list(); } else
-	 * { tareas =
-	 * taskService.createTaskQuery().active().orderByTaskCreateTime().desc().list();
-	 * }
-	 * 
-	 * List<TareaSimpleDto> tareasDto = tareas.stream() .map(task -> new
-	 * TareaSimpleDto(task.getId(), task.getName(), task.getAssignee(),
-	 * task.getCreateTime(), task.getProcessInstanceId(), task.getAssignee() !=
-	 * null)) .collect(Collectors.toList());
-	 * 
-	 * return ResponseEntity.ok(tareasDto); } catch (Exception e) {
-	 * LOGGER.error("Error al obtener tareas: {}", e.getMessage(), e); return
-	 * ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.
-	 * emptyList()); } }
-	 */
 
 	@GetMapping("/tarea/{taskId}")
 	public ResponseEntity<TareaSimpleDto> obtenerTareaPorId(@PathVariable String taskId) {
@@ -277,6 +250,12 @@ public class ProcesoRestController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
+	
+	@GetMapping("/variables")
+    public Map<String, Object> getVariables(@RequestParam String processInstanceId) {
+        // Obtiene todas las variables (podrías filtrar si quieres)
+        return runtimeService.getVariables(processInstanceId);
+    }
 
 	@PostMapping("/tarea/{taskId}/reclamar")
 	public ResponseEntity<String> reclamarTarea(@PathVariable String taskId, @RequestBody UserIdDto userIdDto) {

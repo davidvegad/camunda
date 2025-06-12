@@ -1,3 +1,26 @@
+.cabecera-tarea {
+  display: flex;
+  gap: 2em;
+  padding: 0.5em 1.2em;
+  background: #faf8f4;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 2px solid #f99c1c;
+}
+.cabecera-item {
+  display: flex;
+  align-items: center;
+}
+.cabecera-label {
+  color: #e57624;
+  font-weight: bold;
+  margin-right: 0.5em;
+}
+.cabecera-valor {
+  font-weight: 500;
+}
+
+
 .tabs-container {
   margin: 2rem 0;
 }

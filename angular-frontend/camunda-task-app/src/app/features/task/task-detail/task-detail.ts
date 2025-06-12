@@ -1,9 +1,14 @@
-import { Component, ViewChildren, QueryList, OnInit } from '@angular/core';
+import { Component, ViewChildren, QueryList, OnInit,Input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProcesoService } from '../../../core/services/proceso';
-import { FormularioDinamicoComponent } from '../../formularios/formulario-dinamico/formulario-dinamico'; // Corrige el path
+import { TareaCabeceraService } from './tarea-cabecera.service';
+import { ProcesoVariablesService } from './proceso-variables.service';
+import { FormularioDinamicoComponent } from '../../formularios/formulario-dinamico/formulario-dinamico'; 
+import { TareaCabecera } from './tarea-cabecera.model';
+
+
 
 
 @Component({
@@ -25,33 +30,64 @@ export class TaskDetailComponent implements OnInit {
 	tareaId: string = '';
 	mensaje : string = '';
 	
+	private processInstanceId = '';
+	
+	//private processInstanceId : string = ''; // HARDCODE
+	
 	formularios: any[] = [];
 	selectedTab: number = 0; // <-- AQUI ESTABA FALTANDO
 	
 	respuestas: { [id: string]: any } = {};
 	pestanaActiva: number = 0;
 	
+	@Input() variables: Record<string, any> = {};
+	
+	cabecera: TareaCabecera[] = [];
+	
 	constructor(
 		private procesoService: ProcesoService,
 		private route: ActivatedRoute,
-		private router: Router
+		private router: Router,
+		private variablesService: ProcesoVariablesService,
+		private cabeceraService: TareaCabeceraService
 	) {}
 	
 	ngOnInit(): void {
 		
 		this.tareaId = this.route.snapshot.paramMap.get('id') || '';
 		if (this.tareaId) {
-			this.cargarDetalleTarea();
-			//this.cargarFormFields();
+			this.procesoService.obtenerTareaDetalle(this.tareaId).subscribe(task => {
+				
+				//this.task = tarea;
+				this.processInstanceId = task.processInstanceId;
+				this.isLoading = false;
+				
+				if (this.processInstanceId) {
+					this.variablesService.getVariables(this.processInstanceId)
+					.subscribe(vars => this.variables = vars);
+				}
+				},
+				(err: any) => {
+					this.errorMensaje = 'Error al cargar tarea: ' + (err?.message || err);
+					this.isLoading = false;
+				}
+			);
+			
 			} else {
 			this.errorMensaje = 'No se proporcionó ID de tarea.';
-		}
-		
-		// Obtener datos de la tarea según tu navegación/routing
-		const procesoKey = this.route.snapshot.paramMap.get('procesoKey')!;
-		const taskDefinitionKey = this.route.snapshot.paramMap.get('taskDefinitionKey')!;
-		
-		this.isLoading = true;
+			}
+			// Obtener datos de la tarea según tu navegación/routing
+			const procesoKey = this.route.snapshot.paramMap.get('procesoKey')!;
+			const taskDefinitionKey = this.route.snapshot.paramMap.get('taskDefinitionKey')!;
+			
+			this.isLoading = true;
+			this.cabeceraService.getCabecera(procesoKey, taskDefinitionKey)
+			.subscribe(cab => 
+				this.cabecera = cab.map(c => ({
+					...c,
+					nombreVariable: c.nombreVariable
+				})).sort((a, b) => a.orden - b.orden)
+			);
 		this.procesoService.obtenerFormulariosPorTarea(procesoKey, taskDefinitionKey)
 		.subscribe({
 			next: formularios => {
@@ -59,8 +95,8 @@ export class TaskDetailComponent implements OnInit {
 				this.isLoading = false;
 			},
 			error: err => {
-				alert('No se pudieron obtener formularios');
-				this.isLoading = false;
+			alert('No se pudieron obtener formularios');
+			this.isLoading = false;
 			}
 		});
 	}
@@ -78,6 +114,8 @@ export class TaskDetailComponent implements OnInit {
 		this.procesoService.obtenerTareaDetalle(this.tareaId).subscribe(
 			(tarea: any) => {
 				this.task = tarea;
+				this.processInstanceId = tarea.processInstanceId;
+				alert(this.processInstanceId);
 				this.isLoading = false;
 			},
 			(err: any) => {

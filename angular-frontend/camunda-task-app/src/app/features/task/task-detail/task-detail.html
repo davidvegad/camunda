@@ -1,3 +1,12 @@
+<div class="cabecera-tarea">
+  <ng-container *ngFor="let campo of cabecera">
+    <div class="cabecera-item">
+      <span class="cabecera-label">{{ campo.etiqueta }}:</span>
+      <span class="cabecera-valor">{{ variables[campo.nombreVariable] || '-' }}</span>
+    </div>
+  </ng-container>
+</div>
+
 <div class="tabs-container">
 	<ul class="tabs-list">
 		<li *ngFor="let formulario of formularios; let idx = index"

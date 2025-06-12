@@ -53,7 +53,6 @@ export class ProcesoService {
 		return this.http.post(`${backendUrl}/iniciar-con-businesskey/${processDefinitionKey}`, null, { responseType: 'text' });
 	}
 	
-	
 	// Task detail
 	obtenerTareaDetalle(id: string): Observable<any> {
 		return this.http.get(`${backendUrl}/tarea/${id}`);
