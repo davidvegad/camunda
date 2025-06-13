@@ -1,24 +1,74 @@
 .cabecera-tarea {
   display: flex;
-  gap: 2em;
-  padding: 0.5em 1.2em;
-  background: #faf8f4;
-  border-radius: 8px;
-  margin-bottom: 12px;
-  border: 2px solid #f99c1c;
+  flex-direction: column;
+  gap: 0.4em;
+  padding: 1.1em 1.6em 1.3em 1.6em;
+  background: #fff8ed;
+  border: 2.5px solid #f99c1c;
+  border-radius: 9px;
+  margin-bottom: 18px;
+  box-shadow: 0 1px 4px #f6e8c7;
 }
+
+.cabecera-titulo {
+  color: #e57624;
+  font-size: 1.19em;
+  font-weight: bold;
+  margin-bottom: 0.75em;
+  letter-spacing: 1px;
+}
+
+.cabecera-campos-fijas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.8em;
+  margin-bottom: 1.1em;
+  padding: 0.4em 0.6em;
+  background: linear-gradient(90deg,#ffe3c4 50%,#fff7e2 100%);
+  border-radius: 7px;
+  border: 1.5px solid #fdb260;
+  box-shadow: 0 1px 8px #fde7b9;
+}
+
+.cabecera-label-fija {
+  color: #f0831c;
+  font-weight: bold;
+  font-size: 1.04em;
+  margin-right: 0.25em;
+  letter-spacing: 0.7px;
+}
+
+.cabecera-valor-fija {
+  color: #1a1423;
+  font-weight: 600;
+  font-size: 1.03em;
+  margin-right: 1.3em;
+}
+
+.cabecera-campos {
+  display: flex;
+  gap: 2em;
+  flex-wrap: wrap;
+}
+
 .cabecera-item {
   display: flex;
   align-items: center;
 }
+
 .cabecera-label {
   color: #e57624;
   font-weight: bold;
-  margin-right: 0.5em;
+  margin-right: 0.4em;
 }
+
 .cabecera-valor {
   font-weight: 500;
 }
+
+
+
 
 
 .tabs-container {

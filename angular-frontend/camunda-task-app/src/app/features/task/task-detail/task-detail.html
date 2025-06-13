@@ -1,11 +1,29 @@
 <div class="cabecera-tarea">
-  <ng-container *ngFor="let campo of cabecera">
-    <div class="cabecera-item">
-      <span class="cabecera-label">{{ campo.etiqueta }}:</span>
-      <span class="cabecera-valor">{{ variables[campo.nombreVariable] || '-' }}</span>
-    </div>
-  </ng-container>
+  <div class="cabecera-titulo">Información general</div>
+
+  <!-- PARTE FIJA -->
+  <div class="cabecera-campos-fijas">
+    <span class="cabecera-label-fija">Proceso:</span>
+    <span class="cabecera-valor-fija">{{ nombreProceso }}</span>
+    <span class="cabecera-label-fija">Tarea:</span>
+    <span class="cabecera-valor-fija">{{ nombreTarea }}</span>
+    <span class="cabecera-label-fija">Identificador:</span>
+    <span class="cabecera-valor-fija">{{ businessKey || '-' }}</span>
+  </div>
+
+  <!-- CAMPOS VARIABLES -->
+  <div class="cabecera-campos">
+    <ng-container *ngFor="let campo of cabecera">
+      <div class="cabecera-item">
+        <span class="cabecera-label">{{ campo.etiqueta }}:</span>
+        <span class="cabecera-valor">{{ variables[campo.nombreVariable] || '-' }}</span>
+      </div>
+    </ng-container>
+  </div>
 </div>
+
+
+
 
 <div class="tabs-container">
 	<ul class="tabs-list">

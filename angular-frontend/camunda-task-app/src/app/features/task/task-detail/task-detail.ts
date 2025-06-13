@@ -29,8 +29,12 @@ export class TaskDetailComponent implements OnInit {
 	releaseError: string = '';
 	tareaId: string = '';
 	mensaje : string = '';
+	saludo : string = 'Hola';
 	
 	private processInstanceId = '';
+	nombreProceso = '';
+nombreTarea = '';
+businessKey = '';
 	
 	//private processInstanceId : string = ''; // HARDCODE
 	
@@ -60,6 +64,9 @@ export class TaskDetailComponent implements OnInit {
 				
 				//this.task = tarea;
 				this.processInstanceId = task.processInstanceId;
+				this.nombreTarea = task.name;
+				this.businessKey = task.businessKey; // si tu endpoint lo trae
+				this.nombreProceso = task.nombreProceso;
 				this.isLoading = false;
 				
 				if (this.processInstanceId) {

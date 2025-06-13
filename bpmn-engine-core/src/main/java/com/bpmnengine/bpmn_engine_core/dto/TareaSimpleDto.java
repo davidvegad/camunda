@@ -6,7 +6,23 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class TareaSimpleDto {
-    public TareaSimpleDto() {
+    public String getBusinessKey() {
+		return businessKey;
+	}
+
+	public void setBusinessKey(String businessKey) {
+		this.businessKey = businessKey;
+	}
+
+	public String getNombreProceso() {
+		return nombreProceso;
+	}
+
+	public void setNombreProceso(String nombreProceso) {
+		this.nombreProceso = nombreProceso;
+	}
+
+	public TareaSimpleDto() {
 		super();
 	}
 
@@ -82,10 +98,12 @@ public class TareaSimpleDto {
     private boolean asignada;
     private String processDefinitionKey;   // NUEVO
     private String taskDefinitionKey;      // NUEVO
+    private String businessKey;      // <--- nuevo
+    private String nombreProceso;    // <--- nuevo
 
     // constructor completo
     public TareaSimpleDto(String id, String name, String assignee, Date createTime, String processInstanceId,
-                          boolean asignada, String processDefinitionKey, String taskDefinitionKey) {
+                          boolean asignada, String processDefinitionKey, String taskDefinitionKey, String businessKey, String nombreProceso ) {
         this.id = id;
         this.name = name;
         this.assignee = assignee;
@@ -94,5 +112,7 @@ public class TareaSimpleDto {
         this.asignada = asignada;
         this.processDefinitionKey = processDefinitionKey;
         this.taskDefinitionKey = taskDefinitionKey;
+        this.nombreProceso = nombreProceso;
+        this.businessKey = businessKey;
     }
 }

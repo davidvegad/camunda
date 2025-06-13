@@ -228,6 +228,7 @@ public class ProcesoRestController {
 	}
 
 
+	/*
 	@GetMapping("/tarea/{taskId}")
 	public ResponseEntity<TareaSimpleDto> obtenerTareaPorId(@PathVariable String taskId) {
 		try {
@@ -250,6 +251,53 @@ public class ProcesoRestController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
+	*/
+	
+	@GetMapping("/tarea/{taskId}")
+	public ResponseEntity<TareaSimpleDto> obtenerTareaPorId(@PathVariable String taskId) {
+	    try {
+	        LOGGER.info("Obteniendo tarea con ID: {}", taskId);
+	        Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+	        if (task == null) {
+	            LOGGER.warn("Tarea no encontrada con ID: {}", taskId);
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	        }
+
+	        // Definición del proceso
+	        ProcessDefinition def = repositoryService.createProcessDefinitionQuery()
+	                .processDefinitionId(task.getProcessDefinitionId())
+	                .singleResult();
+	        String processDefinitionKey = def != null ? def.getKey() : null;
+	        String nombreProceso = def != null ? def.getName() : null;
+
+	        // BusinessKey
+	        String businessKey = null;
+	        if (task.getProcessInstanceId() != null) {
+	            businessKey = runtimeService.createProcessInstanceQuery()
+	                            .processInstanceId(task.getProcessInstanceId())
+	                            .singleResult()
+	                            .getBusinessKey();
+	        }
+
+	        TareaSimpleDto tareaDto = new TareaSimpleDto(
+	                task.getId(),
+	                task.getName(),
+	                task.getAssignee(),
+	                task.getCreateTime(),
+	                task.getProcessInstanceId(),
+	                task.getAssignee() != null,
+	                processDefinitionKey,
+	                task.getTaskDefinitionKey(),
+	                businessKey,          // <-- nuevo campo
+	                nombreProceso         // <-- nuevo campo
+	        );
+	        return ResponseEntity.ok(tareaDto);
+	    } catch (Exception e) {
+	        LOGGER.error("Error al obtener la tarea {}: {}", taskId, e.getMessage(), e);
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+	}
+
 	
 	@GetMapping("/variables")
     public Map<String, Object> getVariables(@RequestParam String processInstanceId) {
