@@ -95,7 +95,7 @@ async function procesarEmail({ remitente, asunto, cuerpo }) {
   try {
     // 1. Llama a OpenAI para extraer datos
     const prompt = [
-      { role: "system", content: "Eres un asistente para atención al cliente. Extrae del email los siguientes datos y devuelve SOLO el JSON: { \"email\": \"\", \"asunto\": \"\", \"necesidad\": \"\", \"sentimiento\": \"\", \"documento\": \"\" }. Si no hay documento, pon null." },
+      { role: "system", content: "Eres un asistente para atención al cliente. Extrae del email los siguientes datos y devuelve SOLO el JSON: { \"email\": \"\", \"asunto\": \"\", \"necesidad\": \"\", \"sentimiento\": \"\", \"documento\": \"\" }. Si no hay documento, pon null. Si no identificas el sentimiento pon neutral" },
       { role: "user", content: `Remitente: ${remitente}\nAsunto: ${asunto}\nCuerpo: ${cuerpo}` }
     ];
 
@@ -120,8 +120,8 @@ async function procesarEmail({ remitente, asunto, cuerpo }) {
     if (!datos.documento || datos.documento === 'null') {
       await enviarEmail(
         remitente,
-        "Falta tu número de documento",
-        "Por favor, responde a este email indicando tu número de documento para poder continuar con tu solicitud."
+        datos.asunto,
+        "Por favor, responde a este email indicando tu número de documento para poder continuar con tu solicitud." + cuerpo
       );
       console.log("Email enviado solicitando número de documento.");
       return;
@@ -159,7 +159,7 @@ async function enviarEmail(destino, asunto, cuerpo) {
   });
 
   await transporter.sendMail({
-    from: '"Atención Cliente" <no-reply@tuservicio.com>',
+    from: '"Atención Cliente" <corusconsultinglatam@gmail.com>',
     to: destino,
     subject: asunto,
     text: cuerpo

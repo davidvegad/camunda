@@ -7,6 +7,7 @@ import { TareaCabeceraService } from './tarea-cabecera.service';
 import { ProcesoVariablesService } from './proceso-variables.service';
 import { FormularioDinamicoComponent } from '../../formularios/formulario-dinamico/formulario-dinamico'; 
 import { TareaCabecera } from './tarea-cabecera.model';
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -33,8 +34,12 @@ export class TaskDetailComponent implements OnInit {
 	
 	private processInstanceId = '';
 	nombreProceso = '';
-nombreTarea = '';
-businessKey = '';
+	nombreTarea = '';
+	businessKey = '';
+	
+	pregunta = '';
+	respuesta = '';
+	isConsultando = false;
 	
 	//private processInstanceId : string = ''; // HARDCODE
 	
@@ -53,7 +58,8 @@ businessKey = '';
 		private route: ActivatedRoute,
 		private router: Router,
 		private variablesService: ProcesoVariablesService,
-		private cabeceraService: TareaCabeceraService
+		private cabeceraService: TareaCabeceraService,
+		private http: HttpClient
 	) {}
 	
 	ngOnInit(): void {
@@ -73,28 +79,28 @@ businessKey = '';
 					this.variablesService.getVariables(this.processInstanceId)
 					.subscribe(vars => this.variables = vars);
 				}
-				},
-				(err: any) => {
-					this.errorMensaje = 'Error al cargar tarea: ' + (err?.message || err);
-					this.isLoading = false;
-				}
+			},
+			(err: any) => {
+				this.errorMensaje = 'Error al cargar tarea: ' + (err?.message || err);
+				this.isLoading = false;
+			}
 			);
 			
 			} else {
 			this.errorMensaje = 'No se proporcionó ID de tarea.';
-			}
-			// Obtener datos de la tarea según tu navegación/routing
-			const procesoKey = this.route.snapshot.paramMap.get('procesoKey')!;
-			const taskDefinitionKey = this.route.snapshot.paramMap.get('taskDefinitionKey')!;
-			
-			this.isLoading = true;
-			this.cabeceraService.getCabecera(procesoKey, taskDefinitionKey)
-			.subscribe(cab => 
-				this.cabecera = cab.map(c => ({
-					...c,
-					nombreVariable: c.nombreVariable
-				})).sort((a, b) => a.orden - b.orden)
-			);
+		}
+		// Obtener datos de la tarea según tu navegación/routing
+		const procesoKey = this.route.snapshot.paramMap.get('procesoKey')!;
+		const taskDefinitionKey = this.route.snapshot.paramMap.get('taskDefinitionKey')!;
+		
+		this.isLoading = true;
+		this.cabeceraService.getCabecera(procesoKey, taskDefinitionKey)
+		.subscribe(cab => 
+			this.cabecera = cab.map(c => ({
+				...c,
+				nombreVariable: c.nombreVariable
+			})).sort((a, b) => a.orden - b.orden)
+		);
 		this.procesoService.obtenerFormulariosPorTarea(procesoKey, taskDefinitionKey)
 		.subscribe({
 			next: formularios => {
@@ -102,17 +108,39 @@ businessKey = '';
 				this.isLoading = false;
 			},
 			error: err => {
-			alert('No se pudieron obtener formularios');
-			this.isLoading = false;
+				alert('No se pudieron obtener formularios');
+				this.isLoading = false;
 			}
 		});
 	}
-	
-	cambiarTab(idx: number) {
-		this.selectedTab = idx;
-	}
-	
-	onFormValido(form: any, formulario: any) {
+	/*
+		consultar() {
+		this.http.post<{ respuesta: string }>('http://localhost:4000/api/consultar-politicas', { pregunta: this.pregunta })
+		.subscribe(resp => this.respuesta = resp.respuesta);
+		}
+	*/
+	consultar() {
+		if (!this.pregunta.trim()) return;
+		this.isConsultando = true;
+		this.respuesta = '';
+		this.http.post<{ respuesta: string }>('http://localhost:4000/api/consultar-politicas', { pregunta: this.pregunta })
+			.subscribe({
+				next: (resp) => {
+					this.respuesta = resp.respuesta;
+					this.isConsultando = false;
+				},
+				error: (err) => {
+					this.respuesta = 'Error al consultar la IA.';
+					this.isConsultando = false;
+				}
+			});
+		}
+		
+		cambiarTab(idx: number) {
+			this.selectedTab = idx;
+		}
+		
+		onFormValido(form: any, formulario: any) {
 		this.respuestas[formulario.id] = form.value;
 	}
 	

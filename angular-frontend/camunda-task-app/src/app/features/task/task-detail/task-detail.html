@@ -50,3 +50,23 @@
 	<button type="button" (click)="onLiberarTarea()">Liberar</button>
 	<button type="button" (click)="onVolver()">Volver</button>
 </div>
+
+<div class="asistente-ia-politica">
+  <label for="consulta-ia">¿Tienes dudas sobre nuestras políticas?</label>
+  <div class="consulta-row">
+    <input id="consulta-ia"
+           [(ngModel)]="pregunta"
+           placeholder="Ejemplo: ¿Puedo vender un seguro a un menor de edad?"
+           type="text"
+           [disabled]="isConsultando" />
+    <button (click)="consultar()" [disabled]="isConsultando || !pregunta.trim()">
+      <span *ngIf="!isConsultando">🧑‍⚖️ Consultar IA</span>
+      <span *ngIf="isConsultando" class="loader"></span>
+    </button>
+  </div>
+  <div *ngIf="respuesta" class="respuesta-chip">
+    <span class="chip-icon">🤖</span>
+    {{ respuesta }}
+  </div>
+</div>
+
