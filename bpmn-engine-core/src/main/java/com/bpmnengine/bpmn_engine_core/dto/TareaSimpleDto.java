@@ -22,10 +22,6 @@ public class TareaSimpleDto {
 		this.nombreProceso = nombreProceso;
 	}
 
-	public TareaSimpleDto() {
-		super();
-	}
-
 	public String getId() {
 		return id;
 	}

@@ -8,9 +8,7 @@ import { ProcesoVariablesService } from './proceso-variables.service';
 import { FormularioDinamicoComponent } from '../../formularios/formulario-dinamico/formulario-dinamico'; 
 import { TareaCabecera } from './tarea-cabecera.model';
 import { HttpClient } from '@angular/common/http';
-
-
-
+import { environment } from '../../../../environments/environment';
 
 @Component({
 	selector: 'app-task-detail',
@@ -123,7 +121,7 @@ export class TaskDetailComponent implements OnInit {
 		if (!this.pregunta.trim()) return;
 		this.isConsultando = true;
 		this.respuesta = '';
-		this.http.post<{ respuesta: string }>('http://localhost:4000/api/consultar-politicas', { pregunta: this.pregunta })
+		this.http.post<{ respuesta: string }>('${environment.apiNodeUrl}/api/consultar-politicas', { pregunta: this.pregunta })
 			.subscribe({
 				next: (resp) => {
 					this.respuesta = resp.respuesta;

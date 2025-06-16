@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: mysql:8
+    container_name: docker-db
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: camunda_db
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - camunda_net
+    command: --transaction-isolation=READ-COMMITTED
+
+  backend:
+    container_name: docker-backend
+    build:
+      context: ../bpmn-engine-core
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/camunda_db
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      BUSINESS_DATASOURCE_JDBC_URL: jdbc:mysql://db:3306/business_db
+      BUSINESS_DATASOURCE_USERNAME: ${MYSQL_USER}
+      BUSINESS_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      SPRING_PROFILES_ACTIVE: docker
+    #command: ["./wait-for-it.sh", "db", "3306", "--", "java", "-jar", "app.jar"]
+    command: ["sh", "-c", "sh wait-for-it.sh db 3306 java -jar app.jar"]
+    ports:
+      - "8080:8080"
+    networks:
+      - camunda_net
+
+  frontend:
+    container_name: docker-frontend
+    build:
+      context: ../angular-frontend/camunda-task-app
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - camunda_net
+
+  node:
+    container_name: docker-node
+    build:
+      context: ../chatbot-backend
+    ports:
+      - "4000:4000"
+    depends_on:
+      - backend
+    environment:
+      - BACKEND_URL=http://docker-backend:8080
+    networks:
+      - camunda_net
+
+networks:
+  camunda_net:
+
+volumes:
+  mysql_data:

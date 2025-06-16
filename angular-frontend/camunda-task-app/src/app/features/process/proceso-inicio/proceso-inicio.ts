@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProcesoService } from '../../../core/services/proceso';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 @Component({
 	selector: 'app-proceso-inicio',
@@ -60,7 +61,8 @@ export class ProcesoInicioComponent implements OnInit {
 		this.error = '';
 		if (!this.textoLibre) return;
 		this.isLoading = true;
-		this.http.post('http://localhost:4000/api/chatbot-iniciar-proceso-libre', { texto: this.textoLibre }).subscribe({
+		//this.http.post('http://localhost:4000/api/chatbot-iniciar-proceso-libre', { texto: this.textoLibre }).subscribe({
+		this.http.post(`${environment.apiNodeUrl}/chatbot-iniciar-proceso-libre`, { texto: this.textoLibre }).subscribe({
 			next: (resp: any) => {
 				this.isLoading = false;
 				if (resp.ok) {

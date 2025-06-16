@@ -166,6 +166,20 @@ async function enviarEmail(destino, asunto, cuerpo) {
   });
 }
 
-
 // Ejecuta la lectura
 authorize().then(listMessages).catch(console.error);
+
+async function leerGmail() {
+  const auth = await authorize();
+  await listMessages(auth);
+}
+
+
+
+module.exports = { leerGmail };
+
+// Para que siga funcionando también como script directo:
+if (require.main === module) {
+  leerGmail();
+}
+
