@@ -129,7 +129,7 @@ async function procesarEmail({ remitente, asunto, cuerpo }) {
 
     // 3. Inicia el proceso en Camunda
     const camundaResponse = await axios.post(
-      'http://localhost:8080/api/proceso/iniciar-con-businesskey/Process_0v8e7t4', // Ajusta process key
+      `${process.env.BACKEND_URL}/api/proceso/iniciar-con-businesskey/Process_0v8e7t4`, // Ajusta process key
       {
         email: datos.email,
         asunto: datos.asunto,

@@ -19,6 +19,8 @@ public class FormularioCampoService {
     private FormularioRepository formularioRepository;
     @Autowired
     private CampoRepository campoRepository;
+    
+    
 
     // Listar todos los campos de un formulario
     public List<FormularioCampoDto> findByFormulario(Long formularioId) {
@@ -90,5 +92,39 @@ public class FormularioCampoService {
             formularioCampoRepository.save(fc);
         }
     }
+    
+    public List<FormularioCampoDto> findCamposDisponiblesParaFormulario(Long formularioId) {
+        // Este método debe devolver los campos NO asociados aún al formularioId
+        // Lógica sugerida (según tu modelo):
+
+        // 1. Traer los ids de los campos ya asociados al formulario
+        List<Long> idsAsociados = formularioCampoRepository.findIdsCamposByFormulario(formularioId);
+
+        // 2. Buscar todos los campos que NO estén en esa lista
+        List<Campo> disponibles;
+        if (idsAsociados.isEmpty()) {
+            disponibles = campoRepository.findAll();
+        } else {
+            disponibles = campoRepository.findByIdNotIn(idsAsociados);
+        }
+
+        // 3. Mapear a DTOs
+        return disponibles.stream()
+        		.map(campo -> {
+        	        FormularioCampoDto dto = new FormularioCampoDto();
+        	        dto.setCampoId(campo.getId());
+        	        dto.setNombreCampo(campo.getNombreCampo());
+        	        dto.setEtiqueta(campo.getEtiqueta());
+        	        dto.setTipo(campo.getTipo());
+        	        dto.setPlaceholder(campo.getPlaceholder());
+        	        dto.setValidacionRegex(campo.getValidacionRegex());
+        	        dto.setMensajeError(campo.getMensajeError());
+        	        dto.setOpciones(campo.getOpciones());
+        	        // No llenes formularioId, requerido, visible, etc. aquí, porque no hay relación aún
+        	        return dto;
+        	    })
+            .collect(Collectors.toList());
+    }
+
 
 }

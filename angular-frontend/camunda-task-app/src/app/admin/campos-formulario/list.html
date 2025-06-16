@@ -1,38 +1,101 @@
-<div *ngIf="loading">Cargando...</div>
-<div *ngIf="error" class="error">{{ error }}</div>
+<div class="agregar-campo-box">
+	<button class="btn-agregar" (click)="abrirAgregarCampo()" [disabled]="loading || !formularioId">
+		<span class="material-icons">add_circle</span>Agregar campo
+	</button>
+</div>
 
-<table *ngIf="!loading && campos.length > 0">
-  <thead>
-    <tr>
-      <th>Orden</th>
-      <th>Campo</th>
-      <th>Etiqueta</th>
-      <th>Requerido</th>
-      <th>Visible</th>
-      <th>Valor por defecto</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let c of campos">
-      <td>{{ c.orden }}</td>
-      <td>{{ c.nombreCampo }}</td>
-      <td>{{ c.etiquetaCampo }}</td>
-      <td>
-        <input type="checkbox" [checked]="c.requerido" disabled>
-      </td>
-      <td>
-        <input type="checkbox" [checked]="c.visible" disabled>
-      </td>
-      <td>{{ c.valorPorDefecto }}</td>
-      <td>
-        <button (click)="eliminarCampo(c.id!)">Quitar</button>
-        <!-- Puedes agregar aquí botones para cambiar orden, editar, etc. -->
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div *ngIf="showModalAgregar" class="modal-agregar-campo">
+	<div class="agregar-campo-modal">
+		<div class="agregar-campo-header">
+			<span class="material-icons icono-header">add_circle</span>
+			<span class="titulo-header">Agregar campo al formulario</span>
+			<button class="btn-cerrar" (click)="cerrarAgregarCampo()" title="Cerrar">&times;</button>
+		</div>
+		<form class="agregar-campo-form" (ngSubmit)="agregarCampoAlFormulario()">
+			<div class="form-group">
+				<label for="campoId">Campo disponible:</label>
+				<select id="campoId" [(ngModel)]="campoId" name="campoId" required>
+				<option [ngValue]="null" disabled selected>Selecciona un campo< option>
+				<option *ngFor="let campo of camposDisponibles" [ngValue]="campo.campoId">
+          {{ campo.nombreCampo }} - {{ campo.etiquetaCampo }}
+				</option>
+			</select>
+		</div>
+		<div class="form-row">
+			<div class="form-group">
+				<label>Orden:</label>
+				<input type="number" [(ngModel)]="orden" name="orden" min="1" required/>
+			</div>
+			<div class="form-group small">
+				<label><input type="checkbox" [(ngModel)]="requerido" name="requerido"/>Requerido</label>
+			</div>
+			<div class="form-group small">
+				<label><input type="checkbox" [(ngModel)]="visible" name="visible"/>Visible</label>
+			</div>
+		</div>
+		<div class="form-group">
+			<label>Valor por defecto:</label>
+			<input [(ngModel)]="valorPorDefecto" name="valorPorDefecto"/>
+		</div>
+		<div class="agregar-campo-actions">
+			<button type="submit" class="btn-agregar2" [disabled]="!campoId || !orden">Agregar</button>
+			<button type="button" (click)="cerrarAgregarCampo()">Cancelar</button>
+		</div>
+		<div *ngIf="agregarError" class="error-msg">
+			<span class="material-icons">error_outline</span>{{ agregarError }}
+		</div>
+	</form>
+</div>
 
-<div *ngIf="!loading && campos.length === 0">
-  No hay campos asociados aún.
+</div>
+
+
+<!-- Sección de asociación de campos -->
+<div class="campos-section">
+	<!-- Mensajes de carga y error -->
+	<div *ngIf="loading" class="loading-msg">
+		<span class="material-icons spin">autorenew</span>Cargando...
+	</div>
+	<div *ngIf="error" class="error-msg">
+		<span class="material-icons">error_outline</span>{{ error }}
+	</div>
+
+	<!-- Tabla -->
+	<table class="tabla-campos-formulario" *ngIf="!loading && !error && campos.length">
+		<thead>
+			<tr>
+				<th>Orden</th>
+				<th>Campo</th>
+				<th>Etiqueta</th>
+				<th>Requerido</th>
+				<th>Visible</th>
+				<th>Valor por defecto</th>
+				<th>Acciones</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let campo of campos; trackBy: trackById">
+				<td>{{ campo.orden }}</td>
+				<td>{{ campo.nombreCampo }}</td>
+				<td>{{ campo.etiquetaCampo }}</td>
+				<td>
+					<input type="checkbox" [checked]="campo.requerido" disabled class="chk-custom" aria-label="Campo requerido"/>
+				</td>
+				<td>
+					<input type="checkbox" [checked]="campo.visible" disabled class="chk-custom" aria-label="Campo visible"/>
+				</td>
+				<td>{{ campo.valorPorDefecto }}</td>
+				<td>
+					<button class="btn-quitar" *ngIf="campo.id !== undefined" (click)="eliminarCampo(campo.id!)">
+						<span class="material-icons">delete</span>
+  Quitar
+					</button>
+
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	<div *ngIf="!loading && !error && !campos.length" class="msg-vacio">
+		<span class="material-icons">info</span>No hay campos asociados aún.
+	</div>
 </div>

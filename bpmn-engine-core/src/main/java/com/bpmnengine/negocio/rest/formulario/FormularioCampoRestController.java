@@ -47,5 +47,11 @@ public class FormularioCampoRestController {
         service.actualizarOrdenCampos(formularioId, ordenDtos);
     }
 
+ // Listar campos disponibles para asociar a un formulario
+    @GetMapping("/formulario/{formularioId}/disponibles")
+    public List<FormularioCampoDto> listarCamposDisponibles(@PathVariable Long formularioId) {
+        return service.findCamposDisponiblesParaFormulario(formularioId);
+    }
+
 
 }
