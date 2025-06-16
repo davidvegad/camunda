@@ -121,7 +121,7 @@ export class TaskDetailComponent implements OnInit {
 		if (!this.pregunta.trim()) return;
 		this.isConsultando = true;
 		this.respuesta = '';
-		this.http.post<{ respuesta: string }>('${environment.apiNodeUrl}/api/consultar-politicas', { pregunta: this.pregunta })
+		this.http.post<{ respuesta: string }>(`${environment.apiNodeUrl}/consultar-politicas`, { pregunta: this.pregunta })
 			.subscribe({
 				next: (resp) => {
 					this.respuesta = resp.respuesta;
