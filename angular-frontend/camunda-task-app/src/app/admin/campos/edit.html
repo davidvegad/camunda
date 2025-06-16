@@ -1,3 +1,4 @@
+<!--
 <h2 *ngIf="!isEdit">Nuevo Campo</h2>
 <h2 *ngIf="isEdit">Editar Campo</h2>
 <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="form">
@@ -25,7 +26,6 @@
       <option value="date">Fecha</option>
       <option value="select">Lista</option>
       <option value="textarea">Textarea</option>
-      <!-- Agrega más si necesitas -->
     </select>
   </label>
 
@@ -54,4 +54,69 @@
   <button type="button" (click)="volver()">Cancelar</button>
   <div *ngIf="error" class="error">{{ error }}</div>
   <div *ngIf="success" class="success">{{ success }}</div>
+</form>
+-->
+<!-- Título destacado -->
+<div class="titulo-seccion-formulario">
+  <span class="material-icons icono-titulo">{{ isEdit ? 'edit' : 'add_box' }}</span>
+  <span class="texto-titulo-formulario">{{ isEdit ? 'Editar Campo' : 'Nuevo Campo' }}</span>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-campo">
+  <div class="form-group">
+    <label>Nombre técnico:<span class="requerido">*</span></label>
+    <input formControlName="nombreCampo" [class.error]="form.get('nombreCampo')?.invalid && form.get('nombreCampo')?.touched" autocomplete="off"/>
+    <div class="campo-error" *ngIf="form.get('nombreCampo')?.invalid && form.get('nombreCampo')?.touched">
+      <span class="material-icons">error_outline</span> Requerido.
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Etiqueta para usuario:<span class="requerido">*</span></label>
+    <input formControlName="etiqueta" [class.error]="form.get('etiqueta')?.invalid && form.get('etiqueta')?.touched"/>
+    <div class="campo-error" *ngIf="form.get('etiqueta')?.invalid && form.get('etiqueta')?.touched">
+      <span class="material-icons">error_outline</span> Requerido.
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Tipo:<span class="requerido">*</span></label>
+    <select formControlName="tipo" [class.error]="form.get('tipo')?.invalid && form.get('tipo')?.touched">
+      <option value="" disabled>Seleccione un tipo</option>
+      <option value="text">Texto</option>
+      <option value="number">Número</option>
+      <option value="date">Fecha</option>
+      <option value="textarea">Textarea</option>
+      <option value="list">Lista</option>
+    </select>
+    <div class="campo-error" *ngIf="form.get('tipo')?.invalid && form.get('tipo')?.touched">
+      <span class="material-icons">error_outline</span> Requerido.
+    </div>
+  </div>
+  <div class="form-group">
+    <label>Placeholder:</label>
+    <input formControlName="placeholder" autocomplete="off"/>
+  </div>
+  <div class="form-group">
+    <label>Opciones (solo para lista, separa por coma):</label>
+    <input formControlName="opciones" autocomplete="off"/>
+  </div>
+  <div class="form-group">
+    <label>Expresión de validación (regex):</label>
+    <input formControlName="validacionRegex" autocomplete="off"/>
+  </div>
+  <div class="form-group">
+    <label>Mensaje de error:</label>
+    <input formControlName="mensajeError" autocomplete="off"/>
+  </div>
+  <div class="botones">
+    <button type="submit" class="btn-primary" [disabled]="form.invalid">
+      <span class="material-icons">{{ isEdit ? 'save' : 'add_circle' }}</span>
+      {{ isEdit ? 'Actualizar' : 'Crear' }}
+    </button>
+    <button type="button" class="btn-cancel" (click)="volver()">
+      <span class="material-icons">cancel</span>
+      Cancelar
+    </button>
+  </div>
+  <div *ngIf="error" class="error-msg"><span class="material-icons">error_outline</span>{{ error }}</div>
+  <div *ngIf="success" class="success-msg"><span class="material-icons">check_circle</span>{{ success }}</div>
 </form>

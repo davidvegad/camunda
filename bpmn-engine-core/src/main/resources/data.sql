@@ -1,7 +1,3 @@
-CREATE DATABASE IF NOT EXISTS business_db;
-GRANT ALL PRIVILEGES ON business_db.* TO 'user'@'%';
-FLUSH PRIVILEGES;
-
 USE business_db;
 
 -- Elimina tablas si existen (solo para pruebas/desarrollo)

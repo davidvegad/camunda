@@ -1,8 +1,94 @@
-.sidebar ul .submenu {
-  margin-left: 1.5em;
-  list-style-type: disc;
+.admin-container {
+  margin: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 2rem;
 }
-.admin-menu-title {
-  font-weight: bold;
-  cursor: pointer;
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
 }
+
+.admin-header h2 {
+  margin: 0;
+  font-size: 2rem;
+  color: #f7921e;
+}
+
+.btn-new {
+  background: #f7921e;
+  color: #fff;
+  padding: 0.5em 1em;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.18s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.09);
+}
+
+.btn-new:hover {
+  background: #ffae42;
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 20px rgba(247,146,30,0.14);
+}
+
+.table-formularios {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.table-formularios th, .table-formularios td {
+  padding: 1em;
+  text-align: left;
+}
+
+.table-formularios thead {
+  background: #ffe7c0;
+}
+
+.table-formularios tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.table-formularios tr:hover {
+  background: #fff3e0;
+}
+
+.table-formularios tr {
+  transition: background 0.35s cubic-bezier(.4,2,.6,.9);
+}
+
+.btn-edit {
+  background: #f7921e;
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.3em 0.9em;
+  font-size: 0.95em;
+  text-decoration: none;
+  transition: background 0.25s, box-shadow 0.25s, transform 0.2s;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.btn-edit:hover {
+  background: #ffae42;
+  color: #fff;
+  transform: translateY(-2px) scale(1.08);
+  box-shadow: 0 6px 18px rgba(247,146,30,0.12);
+}
+
+.material-icons {
+  font-size: 1.1em;
+  vertical-align: middle;
+  margin-right: 0.18em;
+}
+

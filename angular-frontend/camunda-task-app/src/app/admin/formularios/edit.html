@@ -1,11 +1,20 @@
-<h2 *ngIf="!isEdit">Nuevo Formulario</h2>
-<h2 *ngIf="isEdit">Editar Formulario</h2>
+<!-- Título destacado con icono -->
+<div class="titulo-seccion-formulario">
+  <span class="material-icons icono-titulo">
+    {{ isEdit ? 'edit' : 'add_box' }}
+  </span>
+  <span class="texto-titulo-formulario">
+    {{ isEdit ? 'Editar Formulario' : 'Nuevo Formulario' }}
+  </span>
+</div>
 
+<!-- Formulario reactivo -->
 <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="form" class="formulario-form">
   <div class="form-group">
     <label for="nombre">Nombre del formulario<span class="requerido">*</span></label>
-    <input id="nombre" formControlName="nombre" [class.error]="form.get('nombre')?.invalid && form.get('nombre')?.touched">
+    <input id="nombre" formControlName="nombre" [class.error]="form.get('nombre')?.invalid && form.get('nombre')?.touched" autocomplete="off" />
     <div *ngIf="form.get('nombre')?.invalid && form.get('nombre')?.touched" class="error">
+      <span class="material-icons">error_outline</span>
       El nombre es requerido.
     </div>
   </div>
@@ -16,22 +25,31 @@
   </div>
 
   <div class="botones">
-    <button type="submit" [disabled]="form.invalid">{{ isEdit ? 'Actualizar' : 'Crear' }}</button>
-    <button type="button" (click)="volver()">Cancelar</button>
+    <button type="submit" class="btn-primary" [disabled]="form.invalid">
+      <span class="material-icons">{{ isEdit ? 'save' : 'add_circle' }}</span>
+      {{ isEdit ? 'Actualizar' : 'Crear' }}
+    </button>
+    <button type="button" class="btn-cancel" (click)="volver()">
+      <span class="material-icons">cancel</span>
+      Cancelar
+    </button>
   </div>
-  <div *ngIf="error" class="error">{{ error }}</div>
+  <div *ngIf="error" class="error">
+    <span class="material-icons">error_outline</span>
+    {{ error }}
+  </div>
 </form>
 
-<div *ngIf="success" class="success">{{ success }}</div>
+<div *ngIf="success" class="success">
+  <span class="material-icons">check_circle</span>
+  {{ success }}
+</div>
 
-<!-- Sección para los campos asociados -->
-<div *ngIf="isEdit && formularioId">
-  <h3>Campos del formulario</h3>
+<!-- Sección para los campos asociados (solo en modo edición) -->
+<div *ngIf="isEdit && formularioId" class="campos-section">
+  <div class="titulo-seccion-formulario campos-titulo">
+    <span class="material-icons icono-titulo">view_list</span>
+    <span class="texto-titulo-formulario">Campos del formulario</span>
+  </div>
   <campos-formulario-list [formularioId]="formularioId"></campos-formulario-list>
 </div>
-<!--
-<div *ngIf="isEdit && formularioId">
-  <h3>Tareas asociadas</h3>
-  <tareas-formulario-list [formularioId]="formularioId"></tareas-formulario-list>
-</div>
--->

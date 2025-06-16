@@ -6,6 +6,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class TareaSimpleDto {
+	
+	public TareaSimpleDto() {
+		  // puede estar vacío
+		}
     public String getBusinessKey() {
 		return businessKey;
 	}
