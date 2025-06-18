@@ -2,16 +2,18 @@ const fs = require('fs').promises;
 const path = require('path');
 const { authenticate } = require('@google-cloud/local-auth');
 const { google } = require('googleapis');
+const { htmlToText } = require('html-to-text');
 const axios = require('axios');
 require('dotenv').config();
 
-
+const { extractTextFromAttachment } = require('../utils/ocr');
+const { jobProcesarEmailUnitario } = require('./procesar-emails');
 
 const SCOPES = ['https://www.googleapis.com/auth/gmail.modify'];
 const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json');
 const TOKEN_PATH = path.join(process.cwd(), 'token.json');
 
-// Carga o pide credenciales
+// OAuth helpers
 async function loadSavedCredentialsIfExist() {
   try {
     const content = await fs.readFile(TOKEN_PATH);
@@ -20,8 +22,6 @@ async function loadSavedCredentialsIfExist() {
     return null;
   }
 }
-
-// Guarda token OAuth2
 async function saveCredentials(client) {
   const content = await fs.readFile(CREDENTIALS_PATH);
   const keys = JSON.parse(content);
@@ -33,34 +33,118 @@ async function saveCredentials(client) {
   });
   await fs.writeFile(TOKEN_PATH, payload);
 }
-
-// Autenticación OAuth2
 async function authorize() {
   let client = await loadSavedCredentialsIfExist();
-  if (client) {
-    return google.auth.fromJSON(client);
-  }
-  client = await authenticate({
-    scopes: SCOPES,
-    keyfilePath: CREDENTIALS_PATH,
-  });
-  if (client.credentials) {
-    await saveCredentials(client);
-  }
+  if (client) return google.auth.fromJSON(client);
+  client = await authenticate({ scopes: SCOPES, keyfilePath: CREDENTIALS_PATH });
+  if (client.credentials) await saveCredentials(client);
   return client;
 }
 
-// Leer emails nuevos
+function findTextInParts(parts) {
+  for (const part of parts) {
+    if (part.mimeType === 'text/plain' && part.body && part.body.data) {
+      return Buffer.from(part.body.data, 'base64').toString();
+    }
+  }
+  for (const part of parts) {
+    if (part.mimeType === 'text/html' && part.body && part.body.data) {
+      const html = Buffer.from(part.body.data, 'base64').toString();
+      return htmlToText(html);
+    }
+  }
+  // Si hay más partes anidadas
+  for (const part of parts) {
+    if (part.parts && part.parts.length > 0) {
+      const res = findTextInParts(part.parts);
+      if (res) return res;
+    }
+  }
+  return '';
+}
+
+function decodeBase64(data) {
+  // Gmail puede usar URL-safe base64
+  data = data.replace(/-/g, '+').replace(/_/g, '/');
+  return Buffer.from(data, 'base64').toString('utf8');
+}
+
+function findTextRecursive(part) {
+  if (!part) return '';
+
+  // Si tiene partes hijas, recorre cada una
+  if (part.parts && part.parts.length > 0) {
+    for (const sub of part.parts) {
+      const result = findTextRecursive(sub);
+      if (result) return result;
+    }
+  }
+
+  // Prefiere text/plain
+  if (part.mimeType === 'text/plain' && part.body && part.body.data) {
+    return decodeBase64(part.body.data);
+  }
+
+  // Si hay HTML, lo transforma a texto
+  if (part.mimeType === 'text/html' && part.body && part.body.data) {
+    const html = decodeBase64(part.body.data);
+    return htmlToText(html);
+  }
+
+  // Si encuentra cualquier data, úsala
+  if (part.body && part.body.data) {
+    return decodeBase64(part.body.data);
+  }
+
+  return '';
+}
+
+// Extrae cuerpo robustamente (recursivo)
+async function extractBody(payload) {
+  const text = findTextRecursive(payload);
+  return typeof text === 'string' ? text : '';
+}
+
+// Extrae adjuntos (robusto y recursivo)
+// **NUEVA:** Extrae adjuntos y su contenido
+async function extractAttachmentsAndText(gmail, userId, payload, messageId) {
+  let files = [];
+  const parts = payload.parts || [];
+  for (const part of parts) {
+    if (part.filename && part.filename.length > 0 && part.body && part.body.attachmentId) {
+      // Descarga el archivo
+      const att = await gmail.users.messages.attachments.get({
+        userId,
+        messageId,
+        id: part.body.attachmentId
+      });
+      const buffer = Buffer.from(att.data.data, 'base64');
+      const text = await extractTextFromAttachment(part.filename, buffer);
+      files.push({
+        filename: part.filename,
+        mimeType: part.mimeType,
+        buffer, // Puedes guardar el buffer si quieres guardarlo luego
+        text
+      });
+    }
+    // Anidados
+    if (part.parts && part.parts.length > 0) {
+      const nested = await extractAttachmentsAndText(gmail, userId, part, messageId);
+      files = files.concat(nested);
+    }
+  }
+  return files;
+}
+
+// Lee emails y procesa cada uno
 async function listMessages(auth) {
   const gmail = google.gmail({ version: 'v1', auth });
-  // Lee los 5 últimos emails en la bandeja principal (inbox)
   const res = await gmail.users.messages.list({
     userId: 'me',
     labelIds: ['INBOX'],
     maxResults: 5,
-    q: 'is:unread', // Solo no leídos
+    q: 'is:unread',
   });
-
   const messages = res.data.messages || [];
   for (const msg of messages) {
     const msgRes = await gmail.users.messages.get({
@@ -68,21 +152,36 @@ async function listMessages(auth) {
       id: msg.id,
       format: 'full'
     });
+	const payload = msgRes.data.payload;
+	if (payload.parts) {
+  payload.parts.forEach((p, i) => {
+    console.log(`Parte #${i}:`, p.mimeType, p.filename ? '(archivo adjunto)' : '');
+    if (p.body && p.body.data) {
+      console.log('DATA:', p.body.data.slice(0, 50) + '...');
+    }
+  });
+}
+
     const headers = msgRes.data.payload.headers;
     const from = headers.find(h => h.name === 'From')?.value;
     const subject = headers.find(h => h.name === 'Subject')?.value;
-    const bodyPart = msgRes.data.payload.parts?.find(p => p.mimeType === 'text/plain');
-    const body = bodyPart ? Buffer.from(bodyPart.body.data, 'base64').toString() : '';
+    const body = await extractBody(msgRes.data.payload);
+    const attachments = await extractAttachmentsAndText(gmail, 'me', msgRes.data.payload, msg.id);
+
 
     console.log('----');
     console.log('De:', from);
     console.log('Asunto:', subject);
-    console.log('Cuerpo:', body.substring(0, 400));
-    // Aquí puedes integrar con tu función para procesar e iniciar el proceso en Camunda
-	await procesarEmail({ remitente: from, asunto: subject, cuerpo: body });
+    //console.log('Cuerpo:', body.substring(0, 400));
+	console.log('Cuerpo:', typeof body === 'string' ? body.substring(0, 400) : JSON.stringify(body).substring(0, 400));
+    console.log('Adjuntos:', attachments.map(a => a.filename));
 
+    // Procesa usando tu lógica inteligente
+    await jobProcesarEmailUnitario({
+      from, subject, body, attachments
+    });
 
-	// (Opcional) Marca el email como leído
+    // Marca como leído
     await gmail.users.messages.modify({
       userId: 'me',
       id: msg.id,
@@ -91,95 +190,14 @@ async function listMessages(auth) {
   }
 }
 
-async function procesarEmail({ remitente, asunto, cuerpo }) {
-  try {
-    // 1. Llama a OpenAI para extraer datos
-    const prompt = [
-      { role: "system", content: "Eres un asistente para atención al cliente. Extrae del email los siguientes datos y devuelve SOLO el JSON: { \"email\": \"\", \"asunto\": \"\", \"necesidad\": \"\", \"sentimiento\": \"\", \"documento\": \"\" }. Si no hay documento, pon null. Si no identificas el sentimiento pon neutral" },
-      { role: "user", content: `Remitente: ${remitente}\nAsunto: ${asunto}\nCuerpo: ${cuerpo}` }
-    ];
-
-    const openaiResponse = await axios.post(
-      'https://api.openai.com/v1/chat/completions',
-      {
-        model: process.env.OPENAI_MODEL || "gpt-4.1-nano",
-        messages: prompt
-      },
-      { headers: { 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}` } }
-    );
-
-    let datos;
-    try {
-      datos = JSON.parse(openaiResponse.data.choices[0].message.content);
-    } catch (err) {
-      console.error('No se pudieron extraer los datos del email:', err);
-      return;
-    }
-
-    // 2. Si falta documento, responde al cliente (opcional)
-    if (!datos.documento || datos.documento === 'null') {
-      await enviarEmail(
-        remitente,
-        datos.asunto,
-        "Por favor, responde a este email indicando tu número de documento para poder continuar con tu solicitud." + cuerpo
-      );
-      console.log("Email enviado solicitando número de documento.");
-      return;
-    }
-
-    // 3. Inicia el proceso en Camunda
-    const camundaResponse = await axios.post(
-      `${process.env.BACKEND_URL}/api/proceso/iniciar-con-businesskey/Process_0v8e7t4`, // Ajusta process key
-      {
-        email: datos.email,
-        asunto: datos.asunto,
-        necesidad: datos.necesidad,
-        sentimiento: datos.sentimiento,
-        documento: datos.documento
-      }
-    );
-    console.log("Proceso iniciado en Camunda. ID:", camundaResponse.data);
-
-  } catch (e) {
-    console.error('Error al procesar el email:', e);
-  }
-}
-
-const nodemailer = require('nodemailer');
-
-async function enviarEmail(destino, asunto, cuerpo) {
-  let transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    }
-  });
-
-  await transporter.sendMail({
-    from: '"Atención Cliente" <corusconsultinglatam@gmail.com>',
-    to: destino,
-    subject: asunto,
-    text: cuerpo
-  });
-}
-
-// Ejecuta la lectura
-authorize().then(listMessages).catch(console.error);
-
+// Punto de entrada para usar como script o módulo
 async function leerGmail() {
   const auth = await authorize();
   await listMessages(auth);
 }
 
-
-
 module.exports = { leerGmail };
 
-// Para que siga funcionando también como script directo:
 if (require.main === module) {
-  leerGmail();
+  leerGmail().catch(console.error);
 }
-

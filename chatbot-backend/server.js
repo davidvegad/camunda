@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { leerGmail } = require('./jobs/read-gmail');
+const { jobProcesarEmails  } = require('./jobs/procesar-emails');
 const cron = require('node-cron');
 
 const app = express();
@@ -30,8 +31,25 @@ app.use('/api', require('./routes/chatbot'));
 //});
 
 // Ejecuta una vez al iniciar (opcional)
-leerGmail();
 
+leerGmail();
+/*
+jobProcesarEmails()
+  .then(() => console.log('Primer job de procesamiento de emails ejecutado.'))
+  .catch(console.error);
+  */
+// (Opcional) Expón un endpoint para ejecutarlo manualmente desde Postman, curl, etc.
+/*
+app.post('/api/ejecutar-job-emails', async (req, res) => {
+  try {
+    await jobProcesarEmails();
+    res.json({ ok: true, msg: "Job de emails ejecutado correctamente." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+*/
 // Si en el futuro tienes más rutas, agrégalas aquí igual
 
 const PORT = process.env.PORT || 4000;
