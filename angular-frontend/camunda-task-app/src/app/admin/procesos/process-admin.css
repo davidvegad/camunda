@@ -11,7 +11,7 @@
 .process-admin h2,
 .process-admin h3 {
   font-weight: 600;
-  color: #1976d2;
+  color: #ff9800;
   margin-bottom: 1rem;
 }
 
@@ -20,7 +20,7 @@
   flex-wrap: wrap;
   gap: 1rem 2rem;
   margin-bottom: 2rem;
-  background: #f5f8fd;
+  background: #fff8ed;
   padding: 1.2rem 1.5rem;
   border-radius: 1rem;
   box-shadow: 0 2px 8px #2221;
@@ -32,7 +32,7 @@
 .form-proceso select {
   padding: 0.55rem 1.1rem;
   border-radius: 1rem;
-  border: 1.5px solid #90caf9;
+  border: 1.5px solid #ffcc80;
   margin-bottom: 0.7rem;
   min-width: 220px;
   font-size: 1em;
@@ -42,7 +42,7 @@
 .form-proceso input:focus,
 .form-proceso textarea:focus,
 .form-proceso select:focus {
-  border-color: #1976d2;
+  border-color: #ff9800;
   outline: none;
 }
 
@@ -55,7 +55,7 @@
   margin-bottom: 0.7rem;
 }
 .chip, .chip-table {
-  background: #e3f2fd;
+  background: #ffe0b2;
   border-radius: 2em;
   padding: 0.23em 1.1em;
   display: inline-flex;
@@ -63,7 +63,8 @@
   font-size: 0.98em;
   margin-right: 0.4em;
   margin-bottom: 0.4em;
-  box-shadow: 0 1px 3px #1976d211;
+  box-shadow: 0 1px 3px #ff980011;
+  color: #e65100;
   animation: popIn 0.22s cubic-bezier(0.3,1.7,0.7,1.01);
 }
 @keyframes popIn {
@@ -73,7 +74,7 @@
 .chip button {
   background: none;
   border: none;
-  color: #1976d2;
+  color: #ff9800;
   cursor: pointer;
   margin-left: 0.35em;
   font-size: 1.07em;
@@ -87,15 +88,15 @@
 }
 
 .mensaje-ok {
-  color: #fff;
-  background: linear-gradient(90deg, #2196f3, #1e88e5 85%);
+  color: #2e7d32;
+  background: #c8e6c9;
   padding: 0.7em 1.5em;
   border-radius: 1em;
   margin-bottom: 1em;
   font-weight: 500;
   display: inline-block;
   letter-spacing: 0.01em;
-  box-shadow: 0 1px 6px #2196f355;
+  box-shadow: 0 1px 6px #81c78445;
 }
 
 table {
@@ -104,18 +105,21 @@ table {
   border-collapse: collapse;
   background: #fff;
   border-radius: 1.1rem;
-  box-shadow: 0 2px 6px #1976d215;
+  box-shadow: 0 2px 6px #ff98001c;
   overflow: hidden;
 }
 table th, table td {
   padding: 0.6rem 1.1rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid #ffe0b2;
 }
 table th {
-  background: #e3f2fd;
+  background: #ffe0b2;
   text-align: left;
   font-weight: 600;
-  color: #1976d2;
+  color: #ff9800;
+}
+table tr:nth-child(even) td {
+  background: #fff8ed;
 }
 table tr:last-child td {
   border-bottom: none;
@@ -123,7 +127,7 @@ table tr:last-child td {
 
 table button {
   border: none;
-  background: #1976d2;
+  background: #ff9800;
   color: #fff;
   border-radius: 1.5em;
   padding: 0.3em 1.1em;
@@ -131,10 +135,10 @@ table button {
   font-size: 0.96em;
   cursor: pointer;
   transition: background 0.17s;
-  box-shadow: 0 1px 4px #1976d211;
+  box-shadow: 0 1px 4px #ff980011;
 }
 table button:hover {
-  background: #0d47a1;
+  background: #f57c00;
 }
 
 ul {
@@ -143,30 +147,30 @@ ul {
 }
 ul li {
   display: inline-block;
-  background: #e3f2fd;
+  background: #ffe0b2;
   border-radius: 2em;
   padding: 0.22em 1em;
   margin: 0.2em 0.4em 0.2em 0;
   font-size: 0.97em;
-  color: #1976d2;
+  color: #e65100;
 }
 
 input[name="palabraNueva"] {
   min-width: 210px;
   padding: 0.45em 1em;
   border-radius: 1.2em;
-  border: 1.5px solid #90caf9;
-  background: #fafcff;
+  border: 1.5px solid #ffcc80;
+  background: #fffdfa;
   margin-right: 0.5em;
   transition: border-color 0.18s;
 }
 input[name="palabraNueva"]:focus {
-  border-color: #1976d2;
+  border-color: #ff9800;
   outline: none;
 }
 button {
   border: none;
-  background: #2196f3;
+  background: #ff9800;
   color: #fff;
   border-radius: 2em;
   padding: 0.5em 1.4em;
@@ -177,8 +181,8 @@ button {
   margin-bottom: 0.2em;
   margin-right: 0.6em;
   transition: background 0.17s;
-  box-shadow: 0 1px 4px #1976d211;
+  box-shadow: 0 1px 4px #ff980011;
 }
 button:hover {
-  background: #1976d2;
+  background: #f57c00;
 }
