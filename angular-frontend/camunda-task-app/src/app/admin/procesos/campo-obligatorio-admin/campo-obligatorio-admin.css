@@ -1,0 +1,10 @@
+.campo-obligatorio-admin {
+  margin-top: 1rem;
+}
+table {
+  width: 100%;
+  margin-top: 1rem;
+}
+th, td {
+  padding: 0.5rem;
+}

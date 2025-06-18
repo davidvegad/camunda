@@ -1,0 +1,41 @@
+<div class="campo-obligatorio-admin">
+  <form (ngSubmit)="guardarCampo()">
+    <input [(ngModel)]="campoActual.etiqueta" name="etiqueta" placeholder="Etiqueta" required />
+    <input [(ngModel)]="campoActual.nombre" name="nombre" placeholder="Nombre variable" required />
+    <select [(ngModel)]="campoActual.tipo" name="tipo">
+      <option value="text">Texto</option>
+      <option value="date">Fecha</option>
+      <option value="doc">Documento</option>
+    </select>
+    <label>
+      <input type="checkbox" [(ngModel)]="campoActual.esDocumento" name="esDocumento" /> ¿Es documento?
+    </label>
+    <input *ngIf="campoActual.esDocumento" [(ngModel)]="campoActual.docExtensiones" name="docExtensiones" placeholder="pdf,jpg,png" />
+    <input [(ngModel)]="campoActual.regexValidacion" name="regexValidacion" placeholder="Regex validación" />
+    <button type="submit">{{ editando ? 'Actualizar' : 'Agregar' }}</button>
+    <button type="button" (click)="cancelar()">Limpiar</button>
+  </form>
+  <table>
+    <tr>
+      <th>Etiqueta</th>
+      <th>Nombre</th>
+      <th>Tipo</th>
+      <th>¿Documento?</th>
+      <th>Regex</th>
+      <th>Extensiones</th>
+      <th>Acciones</th>
+    </tr>
+    <tr *ngFor="let campo of campos">
+      <td>{{ campo.etiqueta }}</td>
+      <td>{{ campo.nombre }}</td>
+      <td>{{ campo.tipo }}</td>
+      <td>{{ campo.esDocumento ? 'Sí' : 'No' }}</td>
+      <td>{{ campo.regexValidacion }}</td>
+      <td>{{ campo.docExtensiones }}</td>
+      <td>
+        <button type="button" (click)="editarCampo(campo)">Editar</button>
+        <button type="button" (click)="eliminarCampo(campo)">Eliminar</button>
+      </td>
+    </tr>
+  </table>
+</div>

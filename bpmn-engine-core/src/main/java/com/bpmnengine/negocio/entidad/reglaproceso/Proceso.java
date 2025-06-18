@@ -49,13 +49,12 @@ public class Proceso {
 		this.palabrasClave = palabrasClave;
 	}
 
-	public List<CampoObligatorio> getCampos() {
-		return campos;
-	}
-
-	public void setCampos(List<CampoObligatorio> campos) {
-		this.campos = campos;
-	}
+	/*
+	 * public List<CampoObligatorio> getCampos() { return campos; }
+	 * 
+	 * public void setCampos(List<CampoObligatorio> campos) { this.campos = campos;
+	 * }
+	 */
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,6 +72,6 @@ public class Proceso {
     private List<String> palabrasClave;
 
     // Relación con campos obligatorios
-    @OneToMany(mappedBy = "proceso", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<CampoObligatorio> campos;
+    //@OneToMany(mappedBy = "proceso", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    //private List<CampoObligatorio> campos;
 }

@@ -2,10 +2,16 @@ package com.bpmnengine.negocio.rest.reglaproceso;
 
 
 import com.bpmnengine.negocio.dto.reglaproceso.ProcesoDto;
+import com.bpmnengine.negocio.dto.reglaproceso.CampoObligatorioDto;
+import com.bpmnengine.negocio.entidad.reglaproceso.CampoObligatorio;
 import com.bpmnengine.negocio.entidad.reglaproceso.Proceso;
+import com.bpmnengine.negocio.mapper.reglaproceso.CampoObligatorioMapper;
 import com.bpmnengine.negocio.mapper.reglaproceso.ProcesoMapper;
 import com.bpmnengine.negocio.servicio.reglaproceso.ProcesoService;
+import com.bpmnengine.negocio.repositorio.reglaproceso.ProcesoRepository;
+import com.bpmnengine.negocio.repositorio.reglaproceso.CampoObligatorioRepository;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,25 +23,57 @@ import java.util.stream.Collectors;
 public class ReglaProcesoRestController {
 
     private final ProcesoService procesoService;
+    private final ProcesoRepository procesoRepository;
+    private final CampoObligatorioRepository campoObligatorioRepository;
 
-    public ReglaProcesoRestController(ProcesoService procesoService) {
+
+
+    public ReglaProcesoRestController(ProcesoService procesoService,ProcesoRepository procesoRepository,
+            CampoObligatorioRepository campoObligatorioRepository) {
         this.procesoService = procesoService;
+        this.procesoRepository = procesoRepository;
+        this.campoObligatorioRepository = campoObligatorioRepository;
     }
 
     // Listar todos los procesos (con campos)
+	/*
+	 * @GetMapping public List<ProcesoDto> listarProcesos() { return
+	 * procesoService.findAll().stream() .map(ProcesoMapper::toDto)
+	 * .collect(Collectors.toList()); }
+	 */
+    
     @GetMapping
     public List<ProcesoDto> listarProcesos() {
-        return procesoService.findAll().stream()
-                .map(ProcesoMapper::toDto)
-                .collect(Collectors.toList());
+        List<Proceso> procesos = procesoRepository.findAll();
+        return procesos.stream().map(proceso -> {
+            ProcesoDto dto = ProcesoMapper.toDto(proceso);
+            // Busca y asigna los campos obligatorios por procesoId
+            List<CampoObligatorio> campos = campoObligatorioRepository.findByProcesoId(proceso.getId());
+            dto.setCampos(campos.stream().map(CampoObligatorioMapper::toDto).collect(Collectors.toList()));
+            return dto;
+        }).collect(Collectors.toList());
     }
 
+
     // Obtener un proceso por ID (con campos)
+	/*
+	 * @GetMapping("/{id}") public ProcesoDto obtener(@PathVariable Long id) {
+	 * Proceso entity = procesoService.findById(id); return entity != null ?
+	 * ProcesoMapper.toDto(entity) : null; }
+	 */
+    
     @GetMapping("/{id}")
-    public ProcesoDto obtener(@PathVariable Long id) {
-        Proceso entity = procesoService.findById(id);
-        return entity != null ? ProcesoMapper.toDto(entity) : null;
+    public ResponseEntity<ProcesoDto> obtener(@PathVariable Long id) {
+        return procesoRepository.findById(id)
+            .map(proceso -> {
+                ProcesoDto dto = ProcesoMapper.toDto(proceso);
+                List<CampoObligatorio> campos = campoObligatorioRepository.findByProcesoId(proceso.getId());
+                dto.setCampos(campos.stream().map(CampoObligatorioMapper::toDto).collect(Collectors.toList()));
+                return ResponseEntity.ok(dto);
+            })
+            .orElse(ResponseEntity.notFound().build());
     }
+
     
  // POST /api/reglaprocesos (crear)
     @PostMapping

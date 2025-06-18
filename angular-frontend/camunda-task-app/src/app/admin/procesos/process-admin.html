@@ -5,7 +5,22 @@
     <input [(ngModel)]="procesoActual.nombre" name="nombre" placeholder="Nombre" required />
     <input [(ngModel)]="procesoActual.processKey" name="processKey" placeholder="Key" required />
     <textarea [(ngModel)]="procesoActual.descripcion" name="descripcion" placeholder="Descripción"></textarea>
+	<div>
+	    <!--
+		<input
+          [(ngModel)]="nuevaPalabra"
+          (keyup.enter)="agregarPalabraClave(); $event.preventDefault();"
+          placeholder="Agregar palabra clave"
+        />
+	    -->
+		<input
+          [(ngModel)]="nuevaPalabra"
+          
+          placeholder="Agregar palabra clave"
+        />
 
+        <button type="button" (click)="agregarPalabraClave()">+</button>
+    </div>
    
     <div class="form-group">
       <label>Palabras clave asociadas:</label>
@@ -15,10 +30,6 @@
           <button type="button" (click)="quitarPalabraClave(palabra)">x</button>
         </span>
       </div>
-      <select (change)="agregarPalabraClaveSeleccionada($event)">
-        <option value="">--Selecciona palabra clave--</option>
-        <option *ngFor="let palabra of palabras" [value]="palabra">{{ palabra }}</option>
-      </select>
     </div>
 
     <button type="submit">{{ procesoActual.id ? 'Actualizar' : 'Crear' }}</button>
@@ -53,12 +64,12 @@
       </tr>
     </tbody>
   </table>
-
-  <h3>Palabras clave disponibles</h3>
-  <ul>
-    <li *ngFor="let palabra of palabras">{{ palabra }}</li>
-  </ul>
-  <input [(ngModel)]="palabraNueva" placeholder="Nueva palabra clave" name="palabraNueva"/>
-  <button (click)="agregarPalabra()">Agregar</button>
 </div>
+
+<!-- ...otros campos del proceso... -->
+
+<app-campo-obligatorio-admin *ngIf="procesoActual.id != null" [procesoId]="procesoActual.id"></app-campo-obligatorio-admin>
+
+
+
 
