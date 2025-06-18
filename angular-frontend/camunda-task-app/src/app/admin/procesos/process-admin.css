@@ -1,0 +1,184 @@
+.process-admin {
+  padding: 2rem;
+  background: #fff;
+  border-radius: 1.5rem;
+  max-width: 900px;
+  margin: 2rem auto;
+  box-shadow: 0 6px 32px #1a237e15, 0 1.5px 4px #90caf9b8;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+
+.process-admin h2,
+.process-admin h3 {
+  font-weight: 600;
+  color: #1976d2;
+  margin-bottom: 1rem;
+}
+
+.form-proceso {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  margin-bottom: 2rem;
+  background: #f5f8fd;
+  padding: 1.2rem 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px #2221;
+  align-items: center;
+}
+
+.form-proceso input,
+.form-proceso textarea,
+.form-proceso select {
+  padding: 0.55rem 1.1rem;
+  border-radius: 1rem;
+  border: 1.5px solid #90caf9;
+  margin-bottom: 0.7rem;
+  min-width: 220px;
+  font-size: 1em;
+  background: #fff;
+  transition: border-color 0.2s;
+}
+.form-proceso input:focus,
+.form-proceso textarea:focus,
+.form-proceso select:focus {
+  border-color: #1976d2;
+  outline: none;
+}
+
+.form-group {
+  width: 100%;
+  margin-bottom: 0.6rem;
+}
+
+.chips {
+  margin-bottom: 0.7rem;
+}
+.chip, .chip-table {
+  background: #e3f2fd;
+  border-radius: 2em;
+  padding: 0.23em 1.1em;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.98em;
+  margin-right: 0.4em;
+  margin-bottom: 0.4em;
+  box-shadow: 0 1px 3px #1976d211;
+  animation: popIn 0.22s cubic-bezier(0.3,1.7,0.7,1.01);
+}
+@keyframes popIn {
+  from { transform: scale(0.85); opacity: 0.2; }
+  to { transform: scale(1); opacity: 1; }
+}
+.chip button {
+  background: none;
+  border: none;
+  color: #1976d2;
+  cursor: pointer;
+  margin-left: 0.35em;
+  font-size: 1.07em;
+  transition: color 0.17s;
+  padding: 0 0.1em;
+}
+.chip button:hover {
+  color: #f44336;
+  background: #e5737311;
+  border-radius: 50%;
+}
+
+.mensaje-ok {
+  color: #fff;
+  background: linear-gradient(90deg, #2196f3, #1e88e5 85%);
+  padding: 0.7em 1.5em;
+  border-radius: 1em;
+  margin-bottom: 1em;
+  font-weight: 500;
+  display: inline-block;
+  letter-spacing: 0.01em;
+  box-shadow: 0 1px 6px #2196f355;
+}
+
+table {
+  width: 100%;
+  margin-top: 2rem;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 1.1rem;
+  box-shadow: 0 2px 6px #1976d215;
+  overflow: hidden;
+}
+table th, table td {
+  padding: 0.6rem 1.1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+table th {
+  background: #e3f2fd;
+  text-align: left;
+  font-weight: 600;
+  color: #1976d2;
+}
+table tr:last-child td {
+  border-bottom: none;
+}
+
+table button {
+  border: none;
+  background: #1976d2;
+  color: #fff;
+  border-radius: 1.5em;
+  padding: 0.3em 1.1em;
+  margin-right: 0.6em;
+  font-size: 0.96em;
+  cursor: pointer;
+  transition: background 0.17s;
+  box-shadow: 0 1px 4px #1976d211;
+}
+table button:hover {
+  background: #0d47a1;
+}
+
+ul {
+  margin: 1.2em 0;
+  padding-left: 1.2em;
+}
+ul li {
+  display: inline-block;
+  background: #e3f2fd;
+  border-radius: 2em;
+  padding: 0.22em 1em;
+  margin: 0.2em 0.4em 0.2em 0;
+  font-size: 0.97em;
+  color: #1976d2;
+}
+
+input[name="palabraNueva"] {
+  min-width: 210px;
+  padding: 0.45em 1em;
+  border-radius: 1.2em;
+  border: 1.5px solid #90caf9;
+  background: #fafcff;
+  margin-right: 0.5em;
+  transition: border-color 0.18s;
+}
+input[name="palabraNueva"]:focus {
+  border-color: #1976d2;
+  outline: none;
+}
+button {
+  border: none;
+  background: #2196f3;
+  color: #fff;
+  border-radius: 2em;
+  padding: 0.5em 1.4em;
+  font-size: 1.04em;
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: 0.3em;
+  margin-bottom: 0.2em;
+  margin-right: 0.6em;
+  transition: background 0.17s;
+  box-shadow: 0 1px 4px #1976d211;
+}
+button:hover {
+  background: #1976d2;
+}

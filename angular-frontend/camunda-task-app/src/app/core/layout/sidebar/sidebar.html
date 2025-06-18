@@ -9,8 +9,19 @@
 				<li routerLink="/admin/formularios" routerLinkActive="active">Formularios</li>
 				<li routerLink="/admin/campos" routerLinkActive="active">Campos</li>
 				<li routerLink="/admin/tareas" routerLinkActive="active">Tareas</li><!-- <--- AQUÍ -->
-
-			</ul>
-		</li>
-	</ul>
-</nav>
+				<li class="submenu" [class.open]="submenuOpen">
+					<div class="submenu-title" (click)="toggleSubmenu()">
+						<span>Procesos</span>
+						<span class="arrow">&#9662;</span>
+					</div>
+					<ul class="submenu-list">
+						<li><a routerLink="/admin/procesos" routerLinkActive="active">Administrar procesos</a></li>
+						<li><a routerLink="/admin/procesos/palabras-clave" routerLinkActive="active">Palabras clave</a></li>
+						<li><a routerLink="/admin/procesos/asociar-palabras" routerLinkActive="active">Asociar palabras a proceso</a></li>
+					</ul>
+				</li>
+				<li>
+				</ul>
+			</li>
+		</ul>
+	</nav>

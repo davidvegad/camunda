@@ -9,4 +9,10 @@ import { RouterModule } from '@angular/router';
   templateUrl: './sidebar.html',
   styleUrls: ['./sidebar.css']
 })
-export class SidebarComponent {}
+
+export class SidebarComponent {
+  submenuOpen = false;
+  toggleSubmenu() {
+    this.submenuOpen = !this.submenuOpen;
+  }
+}

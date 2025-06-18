@@ -1,0 +1,64 @@
+
+<div class="process-admin">
+  <h2>Administrador de Procesos</h2>
+  <form (ngSubmit)="guardar()" class="form-proceso">
+    <input [(ngModel)]="procesoActual.nombre" name="nombre" placeholder="Nombre" required />
+    <input [(ngModel)]="procesoActual.processKey" name="processKey" placeholder="Key" required />
+    <textarea [(ngModel)]="procesoActual.descripcion" name="descripcion" placeholder="Descripción"></textarea>
+
+   
+    <div class="form-group">
+      <label>Palabras clave asociadas:</label>
+      <div class="chips">
+        <span class="chip" *ngFor="let palabra of procesoActual.palabrasClave">
+          {{ palabra }}
+          <button type="button" (click)="quitarPalabraClave(palabra)">x</button>
+        </span>
+      </div>
+      <select (change)="agregarPalabraClaveSeleccionada($event)">
+        <option value="">--Selecciona palabra clave--</option>
+        <option *ngFor="let palabra of palabras" [value]="palabra">{{ palabra }}</option>
+      </select>
+    </div>
+
+    <button type="submit">{{ procesoActual.id ? 'Actualizar' : 'Crear' }}</button>
+    <button type="button" (click)="limpiar()">Limpiar</button>
+  </form>
+
+  <div *ngIf="mensaje" class="mensaje-ok">{{ mensaje }}</div>
+
+  <h3>Procesos existentes</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Key</th>
+        <th>Descripción</th>
+        <th>Palabras clave</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let proceso of procesos">
+        <td>{{ proceso.nombre }}</td>
+        <td>{{ proceso.processKey }}</td>
+        <td>{{ proceso.descripcion }}</td>
+        <td>
+          <span *ngFor="let palabra of proceso.palabrasClave" class="chip-table">{{ palabra }}</span>
+        </td>
+        <td>
+          <button (click)="seleccionar(proceso)">Editar</button>
+          <button (click)="eliminarProceso(proceso.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Palabras clave disponibles</h3>
+  <ul>
+    <li *ngFor="let palabra of palabras">{{ palabra }}</li>
+  </ul>
+  <input [(ngModel)]="palabraNueva" placeholder="Nueva palabra clave" name="palabraNueva"/>
+  <button (click)="agregarPalabra()">Agregar</button>
+</div>
+

@@ -28,3 +28,29 @@
   border-left: 4px solid #ff9800;
   color: #ff9800;
 }
+
+.submenu .submenu-list {
+  display: none;
+  margin-left: 1.5em;
+  padding-left: 0;
+  list-style: none;
+}
+
+.submenu.open .submenu-list {
+  display: block;
+}
+
+.submenu-title {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.submenu .arrow {
+  transition: transform 0.2s;
+}
+
+.submenu.open .arrow {
+  transform: rotate(180deg);
+}
