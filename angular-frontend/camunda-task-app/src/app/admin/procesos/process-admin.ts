@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatIconModule } from '@angular/material/icon';
 import { ProcessService } from './process.service';
 import { PalabraClaveService } from './palabra-clave.service';
 import { Proceso } from './process.model';
@@ -8,10 +13,11 @@ import { Proceso } from './process.model';
 import { CampoObligatorioAdmin } from './campo-obligatorio-admin/campo-obligatorio-admin';
 
 
+
 @Component({
 	selector: 'process-admin',
 	standalone: true,
-	imports: [CommonModule, FormsModule,CampoObligatorioAdmin],  // <-- AGREGA ESTO
+	imports: [CommonModule, FormsModule,MatDialogModule,MatIconModule,MatButtonModule,MatSidenavModule,CampoObligatorioAdmin],  // <-- AGREGA ESTO
 	templateUrl: './process-admin.html',
 	styleUrls: ['./process-admin.css']
 })
@@ -32,9 +38,15 @@ export class ProcessAdmin implements OnInit {
 	palabrasClave: string[] = [];
 	nuevaPalabra: string = '';
 	
+	drawerAbierto = false;
+    procesoDrawer: any = null; // O usa tu modelo Proceso
+    
+    @ViewChild('drawer') drawer!: MatSidenavModule;
+	
 	constructor(
 		private processService: ProcessService,
-		private palabraService: PalabraClaveService
+		private palabraService: PalabraClaveService,
+		private dialog: MatDialogModule
 	) {}
 	
 	ngOnInit() {
@@ -102,6 +114,17 @@ export class ProcessAdmin implements OnInit {
 		this.nuevaPalabra = '';
 	}
 	
+	abrirDrawer(proceso: any) {
+      this.procesoDrawer = proceso;
+      this.drawerAbierto = true;
+      // Si quieres: this.drawer.open();
+    }
+    
+    cerrarDrawer() {
+      this.drawerAbierto = false;
+      this.procesoDrawer = null;
+      // Si quieres: this.drawer.close();
+    }
 	
 	
 }

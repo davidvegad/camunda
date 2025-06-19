@@ -1,4 +1,4 @@
-
+<!--
 <div class="process-admin">
   <h2>Administrador de Procesos</h2>
   <form (ngSubmit)="guardar()" class="form-proceso">
@@ -6,13 +6,6 @@
     <input [(ngModel)]="procesoActual.processKey" name="processKey" placeholder="Key" required />
     <textarea [(ngModel)]="procesoActual.descripcion" name="descripcion" placeholder="Descripción"></textarea>
 	<div>
-	    <!--
-		<input
-          [(ngModel)]="nuevaPalabra"
-          (keyup.enter)="agregarPalabraClave(); $event.preventDefault();"
-          placeholder="Agregar palabra clave"
-        />
-	    -->
 		<input
           [(ngModel)]="nuevaPalabra"
           
@@ -38,7 +31,10 @@
 
   <div *ngIf="mensaje" class="mensaje-ok">{{ mensaje }}</div>
 
+
   <h3>Procesos existentes</h3>
+  <mat-sidenav-container class="sidenav-container">
+  <mat-sidenav-content>
   <table>
     <thead>
       <tr>
@@ -47,6 +43,7 @@
         <th>Descripción</th>
         <th>Palabras clave</th>
         <th>Acciones</th>
+		<th>Campos obligatorios</th>
       </tr>
     </thead>
     <tbody>
@@ -61,15 +58,104 @@
           <button (click)="seleccionar(proceso)">Editar</button>
           <button (click)="eliminarProceso(proceso.id)">Eliminar</button>
         </td>
+		<td>
+          <button mat-button color="primary" (click)="abrirDrawer(proceso)">
+            <mat-icon>rule</mat-icon>
+            Campos obligatorios
+          </button>
+        </td>
       </tr>
     </tbody>
   </table>
-</div>
 
-<!-- ...otros campos del proceso... -->
+  <mat-sidenav #drawer mode="side" position="end" [(opened)]="drawerAbierto" class="drawer-campos">
+    <h3>Campos obligatorios para {{ procesoDrawer?.nombre }}</h3>
+    <app-campo-obligatorio-admin
+      *ngIf="procesoDrawer?.id"
+      [procesoId]="procesoDrawer.id">
+    </app-campo-obligatorio-admin>
+    <button mat-stroked-button color="accent" (click)="cerrarDrawer()">Cerrar</button>
+  </mat-sidenav>
+</mat-sidenav-container>
+</div>
 
 <app-campo-obligatorio-admin *ngIf="procesoActual.id != null" [procesoId]="procesoActual.id"></app-campo-obligatorio-admin>
 
+-->
+<div class="process-admin">
+  <h2>Administrador de Procesos</h2>
+  <form (ngSubmit)="guardar()" class="form-proceso">
+    <input [(ngModel)]="procesoActual.nombre" name="nombre" placeholder="Nombre" required />
+    <input [(ngModel)]="procesoActual.processKey" name="processKey" placeholder="Key" required />
+    <textarea [(ngModel)]="procesoActual.descripcion" name="descripcion" placeholder="Descripción"></textarea>
+    <div>
+      <input
+        [(ngModel)]="nuevaPalabra"
+        placeholder="Agregar palabra clave"
+      />
+      <button type="button" (click)="agregarPalabraClave()">+</button>
+    </div>
+    <div class="form-group">
+      <label>Palabras clave asociadas:</label>
+      <div class="chips">
+        <span class="chip" *ngFor="let palabra of procesoActual.palabrasClave">
+          {{ palabra }}
+          <button type="button" (click)="quitarPalabraClave(palabra)">x</button>
+        </span>
+      </div>
+    </div>
+    <button type="submit">{{ procesoActual.id ? 'Actualizar' : 'Crear' }}</button>
+    <button type="button" (click)="limpiar()">Limpiar</button>
+  </form>
+
+  <div *ngIf="mensaje" class="mensaje-ok">{{ mensaje }}</div>
+
+  <h3>Procesos existentes</h3>
+  <mat-sidenav-container class="sidenav-container">
+    <mat-sidenav-content>
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Key</th>
+            <th>Descripción</th>
+            <th>Palabras clave</th>
+            <th>Acciones</th>
+            <th>Campos obligatorios</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let proceso of procesos">
+            <td>{{ proceso.nombre }}</td>
+            <td>{{ proceso.processKey }}</td>
+            <td>{{ proceso.descripcion }}</td>
+            <td>
+              <span *ngFor="let palabra of proceso.palabrasClave" class="chip-table">{{ palabra }}</span>
+            </td>
+            <td>
+              <button (click)="seleccionar(proceso)">Editar</button>
+              <button (click)="eliminarProceso(proceso.id)">Eliminar</button>
+            </td>
+            <td>
+              <button mat-button color="primary" (click)="abrirDrawer(proceso)">
+                <mat-icon>rule</mat-icon>
+                Campos obligatorios
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </mat-sidenav-content>
+    <mat-sidenav #drawer mode="side" position="end" [(opened)]="drawerAbierto" class="drawer-campos">
+      <h3>Campos obligatorios para {{ procesoDrawer?.nombre }}</h3>
+      <app-campo-obligatorio-admin
+        *ngIf="procesoDrawer?.id"
+        [procesoId]="procesoDrawer.id">
+      </app-campo-obligatorio-admin>
+      <button mat-stroked-button color="accent" (click)="cerrarDrawer()">Cerrar</button>
+    </mat-sidenav>
+  </mat-sidenav-container>
+</div>
 
 
 
