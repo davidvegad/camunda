@@ -1,4 +1,5 @@
 const axios = require('axios');
+const { clasificarEmailLocal } = require('./clasificarEmailLocal');
 
 const BASE_URL = process.env.BACKEND_URL || 'http://localhost:8080';
 
@@ -17,20 +18,24 @@ async function clasificarAdjuntosConIA(attachments, camposEsperados) {
     const prompt = `
 A continuación tienes el texto extraído de un documento adjunto de email. 
 Debes decidir cuál de los siguientes tipos de documento es más probable que sea este archivo. 
-Opciones: 
+Opciones disponibles: 
 ${camposEsperados.map(c => `- ${c.nombre}: ${c.etiqueta || ''} - ${c.descripcion || ''}`).join('\n')}
 Texto extraído del documento:
 ---
 ${adj.text}
 ---
-Devuelve SOLO el nombre del campo que corresponde (o null si no corresponde a ninguno).
+Instrucciones finales:
+- Devuelve solo el nombre del campo más adecuado entre los disponibles.
+- Si el documento no coincide con ninguno, responde exactamente: null
+- No agregues explicaciones ni comillas.
 `;
+	console.log("Promt clasificarAdjuntosConIA",prompt);
     const resp = await axios.post(
       'https://api.openai.com/v1/chat/completions',
       {
         model: process.env.OPENAI_MODEL || "gpt-4o",
         messages: [
-          { role: "system", content: "Eres un clasificador de documentos para automatización. SOLO responde el nombre del campo (o null)." },
+          { role: "system", content: "Eres un clasificador inteligente de documentos para automatización de procesos empresariales. SOLO responde el nombre del campo (o null)." },
           { role: "user", content: prompt }
         ]
       },
@@ -58,10 +63,11 @@ Adjuntos: ${(email.attachments || []).map(a => a.filename).join(', ') || 'ningun
 ---
 `;
 
+  console.log('nombresCampos: ',nombresCampos);
   const openaiResponse = await axios.post(
     'https://api.openai.com/v1/chat/completions',
     {
-      model: process.env.OPENAI_MODEL || "gpt-4o",
+      model: process.env.OPENAI_MODEL || "gpt-4.1-nano",
       messages: [
         { role: "system", content: "Eres un extractor de datos para automatización de procesos. SOLO responde el JSON." },
         { role: "user", content: prompt }
@@ -71,7 +77,7 @@ Adjuntos: ${(email.attachments || []).map(a => a.filename).join(', ') || 'ningun
   );
 
   const respuesta = openaiResponse.data.choices[0].message.content;
-  console.log('Respuesta OpenAI:', respuesta);
+  console.log('Respuesta extraerCamposConOpenAI:', respuesta);
   let variables = {};
   try {
     variables = JSON.parse(respuesta);
@@ -110,6 +116,48 @@ function clasificarEmail(email, procesos) {
   return null;
 }
 
+async function clasificarEmailIA(email, procesos) {
+  const prompt = `
+    Procesos disponibles:
+    ${procesos.map((p, i) =>
+      `${i + 1}. ${p.nombre} (palabras clave: ${p.palabrasClave.join(', ')})`).join('\n')
+    }
+    
+    Dado el siguiente email, ¿a cuál de los procesos corresponde?
+    
+    Email:
+    Asunto: ${email.subject}
+    Cuerpo: ${email.body}
+    Archivos adjuntos: ${(email.attachments || []).map(a => a.filename).join(', ')}
+    
+    Responde sólo el nombre o key del proceso más adecuado, o "ninguno" si no corresponde a ninguno.
+    `;
+
+
+  // Llamada a OpenAI API (ejemplo con fetch, puede variar)
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: process.env.OPENAI_MODEL || "gpt-4.1-nano",
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 16
+    })
+  });
+  const data = await response.json();
+  const salida = data.choices[0].message.content.trim().toLowerCase();
+
+  // Busca el proceso por nombre o key devuelto por la IA
+  const match = procesos.find(
+    p => salida.includes(p.nombre.toLowerCase()) || salida.includes(p.processKey.toLowerCase())
+  );
+  return match || null;
+}
+
+
 async function iniciarProceso(processKey, variables) {
   const resp = await axios.post(
     `${BASE_URL}/api/proceso/iniciar-con-businesskey/${processKey}`,
@@ -120,8 +168,14 @@ async function iniciarProceso(processKey, variables) {
 
 // Procesa un solo email
 async function jobProcesarEmailUnitario(email) {
+  //Prepara datos para buscar en emails
   const procesos = await obtenerProcesos();
-  const proceso = clasificarEmail(email, procesos);
+  //const proceso = clasificarEmail(email, procesos);
+  //Inicia la clasificacion del email para asignarlo a un proceso con la IA, el servicio temrina cuando no encuentra resultados
+  //const proceso = await clasificarEmailIA(email, procesos);
+  const proceso = await clasificarEmailLocal(email, procesos);
+
+  console.log('Proceso: ',proceso.nombre);
 
   if (!proceso) {
     console.log('Email no clasificado:', email.subject);
@@ -131,14 +185,37 @@ async function jobProcesarEmailUnitario(email) {
   const camposTexto = await extraerCamposConOpenAI(email, proceso);
   const camposDocumentoEsperados = proceso.campos.filter(c => c.esDocumento);
   const camposAdjuntosIA = await clasificarAdjuntosConIA(email.attachments || [], camposDocumentoEsperados);
+  console.log('camposAdjuntosIA:', camposAdjuntosIA);
+  
+  // Chequea los campos faltantes de texto (no documentos)
+  let campos = { ...camposTexto, ...camposAdjuntosIA, email: email.from, asunto: email.subject };
+  let camposFaltantes = proceso.campos.filter(
+    campo => !campo.esDocumento && !campos[campo.nombre]
+  ).map(c => c.nombre);
 
-  const campos = { ...camposTexto, ...camposAdjuntosIA, email: email.from, asunto: email.subject };
-
-  // Imprime campos encontrados
-  console.log('Campos extraídos:', campos);
+  // 3. Si faltan campos de texto, busca en los adjuntos usando IA
+  if (camposFaltantes.length && email.attachments && email.attachments.length) {
+    for (const campoFaltante of camposFaltantes) {
+      for (const adj of email.attachments) {
+        if (!adj.text) continue; // Solo si hay texto extraído
+        // Crea un "pseudo-email" con el texto del adjunto como cuerpo
+        const pseudoEmail = {
+          subject: email.subject,
+          body: adj.text,
+          attachments: []
+        };
+        const camposExtraAdjunto = await extraerCamposConOpenAI(pseudoEmail, proceso);
+        if (camposExtraAdjunto[campoFaltante]) {
+          campos[campoFaltante] = camposExtraAdjunto[campoFaltante];
+          break; // Si lo encuentras en algún adjunto, deja de buscar ese campo
+        }
+      }
+    }
+  }
 
   // Chequea qué falta
-  const camposFaltantes = proceso.campos.filter(campo => !campos[campo.nombre]).map(c => c.nombre);
+  camposFaltantes = proceso.campos.filter(campo => !campos[campo.nombre]).map(c => c.nombre);
+  console.log('Cambios enviados al proceso: ',campos);
   if (camposFaltantes.length === 0) {
     const resp = await iniciarProceso(proceso.processKey, campos);
     console.log(`✓ Proceso iniciado: ${proceso.nombre} para ${email.from}. ID: ${resp.id || "?"}`);

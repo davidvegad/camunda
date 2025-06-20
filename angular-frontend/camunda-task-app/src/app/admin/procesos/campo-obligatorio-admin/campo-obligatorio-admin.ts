@@ -1,10 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CampoObligatorioService } from './campo-obligatorio.service';
 import { CampoObligatorio } from './campo-obligatorio.model';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
 	selector: 'app-campo-obligatorio-admin',
@@ -13,17 +11,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 	templateUrl: './campo-obligatorio-admin.html',
 	styleUrls: ['./campo-obligatorio-admin.css']
 })
-export class CampoObligatorioAdmin implements OnInit {
+export class CampoObligatorioAdmin implements OnInit,OnChanges {
 	@Input() procesoId!: number;
 	campos: CampoObligatorio[] = [];
 	campoActual: CampoObligatorio = this.nuevoCampo();
 	editando = false;
 	
-	constructor(private campoService: CampoObligatorioService,
-		@Inject(MAT_DIALOG_DATA) public data: { procesoId: number },
-		public dialogRef: MatDialogRef<CampoObligatorioAdmin>) 
+	constructor(private campoService: CampoObligatorioService) 
 	{
-		this.procesoId = data.procesoId;
 	}
 	//procesoId!: number;
 	
@@ -33,8 +28,10 @@ export class CampoObligatorioAdmin implements OnInit {
 		}
 	}
 	
-	ngOnChanges() {
-		this.cargarCampos();
+	ngOnChanges(changes: SimpleChanges) {
+		if (changes['procesoId'] && changes['procesoId'].currentValue) {
+			this.cargarCampos();
+		}
 	}
 	
 	cargarCampos() {
@@ -84,9 +81,5 @@ export class CampoObligatorioAdmin implements OnInit {
 			tipo: 'text',
 			procesoId: this.procesoId
 		};
-	}
-	
-	cerrar() {
-		this.dialogRef.close();
-	}
+	}	
 }

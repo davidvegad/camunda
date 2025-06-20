@@ -10,7 +10,6 @@
   min-height: 90vh;
   display: flex;
   flex-direction: column;
-  /* Opcional: si quieres más separación */
   gap: 2rem;
 }
 
@@ -21,6 +20,7 @@
   margin-bottom: 1rem;
 }
 
+/* Formulario de proceso */
 .form-proceso {
   display: flex;
   flex-wrap: wrap;
@@ -32,7 +32,6 @@
   box-shadow: 0 2px 8px #2221;
   align-items: center;
 }
-
 .form-proceso input,
 .form-proceso textarea,
 .form-proceso select {
@@ -52,11 +51,45 @@
   outline: none;
 }
 
+/* Botones naranjas globales */
+.btn-orange, .form-proceso button[type="submit"], .form-proceso button[type="button"] {
+  background: #ff9800;
+  color: #fff;
+  border: none;
+  border-radius: 2em;
+  padding: 0.4em 1.4em;
+  font-weight: 600;
+  font-size: 1.08em;
+  cursor: pointer;
+  margin-right: 0.4em;
+  transition: background 0.18s, color 0.18s;
+  box-shadow: 0 1px 4px #ff98001a;
+  min-width: 110px;
+}
+.btn-orange:hover, .form-proceso button[type="submit"]:hover, .form-proceso button[type="button"]:hover {
+  background: #ffa726;
+  color: #833b00;
+}
+.form-proceso button[type="button"].btn-plus {
+  padding: 0.38em 1.05em;
+  min-width: 40px;
+  border-radius: 1.4em;
+  font-size: 1.06em;
+}
+
+/* Grupo de botones del form */
+.botones-form {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Chips y grupo de palabras clave */
 .form-group {
   width: 100%;
   margin-bottom: 0.6rem;
 }
-
 .chips {
   margin-bottom: 0.7rem;
 }
@@ -93,6 +126,7 @@
   border-radius: 50%;
 }
 
+/* Mensajes */
 .mensaje-ok {
   color: #2e7d32;
   background: #c8e6c9;
@@ -105,7 +139,8 @@
   box-shadow: 0 1px 6px #81c78445;
 }
 
-table {
+/* Tabla principal de procesos */
+.process-admin table {
   width: 100%;
   margin-top: 2rem;
   border-collapse: collapse;
@@ -113,25 +148,30 @@ table {
   border-radius: 1.1rem;
   box-shadow: 0 2px 6px #ff98001c;
   overflow: hidden;
+  display: block;
+  overflow-x: auto;
+  transition: max-width 0.25s;
 }
-table th, table td {
+.process-admin table.ajustada {
+  max-width: calc(100vw - 500px); /* deja espacio para el drawer */
+}
+.process-admin th, .process-admin td {
   padding: 0.6rem 1.1rem;
   border-bottom: 1px solid #ffe0b2;
 }
-table th {
+.process-admin th {
   background: #ffe0b2;
   text-align: left;
   font-weight: 600;
   color: #ff9800;
 }
-table tr:nth-child(even) td {
+.process-admin tr:nth-child(even) td {
   background: #fff8ed;
 }
-table tr:last-child td {
+.process-admin tr:last-child td {
   border-bottom: none;
 }
-
-table button {
+.process-admin table button {
   border: none;
   background: #ff9800;
   color: #fff;
@@ -143,88 +183,147 @@ table button {
   transition: background 0.17s;
   box-shadow: 0 1px 4px #ff980011;
 }
-table button:hover {
+.process-admin table button:hover {
   background: #f57c00;
 }
 
-ul {
-  margin: 1.2em 0;
-  padding-left: 1.2em;
-}
-ul li {
-  display: inline-block;
-  background: #ffe0b2;
-  border-radius: 2em;
-  padding: 0.22em 1em;
-  margin: 0.2em 0.4em 0.2em 0;
-  font-size: 0.97em;
-  color: #e65100;
+/* Drawer lateral */
+.sidenav-container {
+  width: 100%;
+  max-width: 100vw;
+  background: none;
 }
 
-input[name="palabraNueva"] {
-  min-width: 210px;
-  padding: 0.45em 1em;
-  border-radius: 1.2em;
-  border: 1.5px solid #ffcc80;
-  background: #fffdfa;
-  margin-right: 0.5em;
-  transition: border-color 0.18s;
+.drawer-campos {
+  width: 440px !important;
+  min-width: 300px;
+  max-width: 98vw;
+  background: #fff7ef;
+  box-shadow: -2px 0 12px 0 #0002;
+  padding: 2.5rem 2.2rem 1.5rem 2rem;
+  border-top-right-radius: 1.5rem;
+  border-bottom-right-radius: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
 }
-input[name="palabraNueva"]:focus {
+
+.drawer-campos h3 {
+  color: #ff9800;
+  font-weight: 800;
+  font-size: 1.35rem;
+  margin-bottom: 1.6rem;
+}
+
+/* Formulario de campos obligatorios en el drawer */
+.campo-obligatorio-admin form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-bottom: 1.2rem;
+  align-items: stretch;
+  background: none;
+  padding: 0;
+  box-shadow: none;
+}
+
+.campo-obligatorio-admin input,
+.campo-obligatorio-admin select {
+  border-radius: 0.9rem;
+  border: 1.4px solid #ff980088;
+  padding: 0.5rem 1rem;
+  font-size: 1.06rem;
+  background: #fff;
+  margin-bottom: 0.3rem;
+  margin-right: 0;
+}
+.campo-obligatorio-admin input:focus,
+.campo-obligatorio-admin select:focus {
   border-color: #ff9800;
   outline: none;
 }
-button {
-  border: none;
+.campo-obligatorio-admin input[type="checkbox"] {
+  width: auto;
+  accent-color: #ff9800;
+  margin-right: 0.7rem;
+}
+
+.campo-obligatorio-admin button[type="submit"],
+.campo-obligatorio-admin button[type="button"],
+.drawer-campos button {
   background: #ff9800;
   color: #fff;
-  border-radius: 2em;
-  padding: 0.5em 1.4em;
-  font-size: 1.04em;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.55rem 2.2rem;
+  font-weight: 600;
+  margin: 0.3rem 0 0.5rem 0;
   cursor: pointer;
-  font-weight: 500;
-  margin-top: 0.3em;
-  margin-bottom: 0.2em;
-  margin-right: 0.6em;
-  transition: background 0.17s;
-  box-shadow: 0 1px 4px #ff980011;
+  font-size: 1.08rem;
+  align-self: flex-start;
+  transition: background 0.13s;
 }
-button:hover {
-  background: #f57c00;
-}
-
-.sidenav-container {
-  height: 100vh;
-}
-.drawer-campos {
-  width: 450px;
-  padding: 16px;
-}
-@media (max-width: 600px) {
-  .drawer-campos {
-    width: 100vw;
-    padding: 8px;
-  }
-}
-.form-proceso,
-.process-admin form {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-  background: #fff7ef;
-  border-radius: 1.2rem;
-  box-shadow: 0 1px 4px 0 #0001;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+.campo-obligatorio-admin button[type="submit"]:hover,
+.campo-obligatorio-admin button[type="button"]:hover,
+.drawer-campos button:hover {
+  background: #ffb84d;
+  color: #7d4b00;
 }
 
-.process-admin table {
+/* Tabla de campos obligatorios */
+.campo-obligatorio-admin table {
   width: 100%;
-  margin: 0;
-  border-radius: 1.2rem;
-  background: #fff7ef;
+  border-radius: 1rem;
+  background: none;
+  margin-top: 0.5rem;
+  border-collapse: collapse;
+  font-size: 1rem;
   overflow: hidden;
 }
+.campo-obligatorio-admin th,
+.campo-obligatorio-admin td {
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  font-size: 1rem;
+}
+.campo-obligatorio-admin th {
+  color: #ff9800;
+  background: #ffe2b5;
+  font-weight: 700;
+  border-bottom: 1.5px solid #ff980040;
+}
+.campo-obligatorio-admin td {
+  border-bottom: 1px solid #ffe2b566;
+}
+.campo-obligatorio-admin tr:last-child td {
+  border-bottom: none;
+}
 
+.drawer-campos .cerrar-btn {
+  align-self: flex-end;
+  margin-top: auto;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 1000px) {
+  .process-admin table,
+  .process-admin table.ajustada {
+    max-width: 100vw;
+  }
+  .drawer-campos {
+    width: 97vw !important;
+    padding: 1.2rem 0.8rem 0.6rem 1.1rem;
+    border-radius: 0;
+  }
+}
+
+/* ¡Esto asegura que el drawer use el alto total y sea scrollable! */
+::ng-deep .drawer-campos {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+  display: flex;
+  flex-direction: column;
+}

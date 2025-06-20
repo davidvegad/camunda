@@ -93,7 +93,7 @@
         [(ngModel)]="nuevaPalabra"
         placeholder="Agregar palabra clave"
       />
-      <button type="button" (click)="agregarPalabraClave()">+</button>
+      <button type="button" (click)="agregarPalabraClave()" class="btn-orange btn-plus">+</button>
     </div>
     <div class="form-group">
       <label>Palabras clave asociadas:</label>
@@ -104,16 +104,19 @@
         </span>
       </div>
     </div>
-    <button type="submit">{{ procesoActual.id ? 'Actualizar' : 'Crear' }}</button>
-    <button type="button" (click)="limpiar()">Limpiar</button>
+	<div class="botones-form">
+		<button type="submit" class="btn-orange">{{ procesoActual.id ? 'Actualizar' : 'Crear' }}</button>
+		<button type="button" (click)="limpiar()" class="btn-orange">Limpiar</button>
+	</div>
   </form>
 
   <div *ngIf="mensaje" class="mensaje-ok">{{ mensaje }}</div>
 
+
   <h3>Procesos existentes</h3>
-  <mat-sidenav-container class="sidenav-container">
+  <mat-sidenav-container class="sidenav-container" hasBackdrop="false">
     <mat-sidenav-content>
-      <table>
+      <table [class.ajustada]="drawerAbierto">
         <thead>
           <tr>
             <th>Nombre</th>
@@ -152,7 +155,7 @@
         *ngIf="procesoDrawer?.id"
         [procesoId]="procesoDrawer.id">
       </app-campo-obligatorio-admin>
-      <button mat-stroked-button color="accent" (click)="cerrarDrawer()">Cerrar</button>
+      <button class="cerrar-btn" mat-stroked-button color="accent" (click)="cerrarDrawer()">Cerrar</button>
     </mat-sidenav>
   </mat-sidenav-container>
 </div>
