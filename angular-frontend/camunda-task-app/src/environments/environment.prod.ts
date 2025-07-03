@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  bpmnApiUrl: 'http://localhost:8080', // Apunta a localhost para desarrollo local
-  nodeApiUrl: 'http://localhost:4000'   // Apunta a localhost para desarrollo local
+  bpmnApiUrl: '${BPMN_API_URL}', // Render inyectará esta variable
+  nodeApiUrl: '${NODE_API_URL}'   // Render inyectará esta variable
 };
