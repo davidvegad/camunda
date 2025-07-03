@@ -2,40 +2,20 @@ version: '3.8'
 
 services:
 
-  db:
-    image: mysql:8
-    container_name: docker-db
-    restart: always
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_DATABASE: camunda_db
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - camunda_net
-    command: --transaction-isolation=READ-COMMITTED
-
   backend:
     container_name: docker-backend
     build:
       context: ../bpmn-engine-core
-    depends_on:
-      - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/camunda_db
-      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
-      BUSINESS_DATASOURCE_JDBC_URL: jdbc:mysql://db:3306/business_db
-      BUSINESS_DATASOURCE_USERNAME: ${MYSQL_USER}
-      BUSINESS_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/camunda_db # Asume que PostgreSQL está en tu host
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pass
+      BUSINESS_DATASOURCE_JDBC_URL: jdbc:postgresql://host.docker.internal:5432/business_db # Asume que PostgreSQL está en tu host
+      BUSINESS_DATASOURCE_USERNAME: user
+      BUSINESS_DATASOURCE_PASSWORD: pass
       SPRING_PROFILES_ACTIVE: docker
-    #command: ["./wait-for-it.sh", "db", "3306", "--", "java", "-jar", "app.jar"]
-    command: ["sh", "-c", "sh wait-for-it.sh db 3306 java -jar app.jar"]
+    #command: ["./wait-for-it.sh", "db", "3306", "--", "java", "-jar", "app.jar"] # Ya no se necesita wait-for-it para db
+    command: ["java", "-jar", "app.jar"]
     ports:
       - "8080:8080"
     networks:
@@ -63,9 +43,6 @@ services:
       - backend
     environment:
       - BACKEND_URL=http://docker-backend:8080
-    volumes:
-      - ../chatbot-backend/credentials.json:/app/credentials.json
-      - ../chatbot-backend/token.json:/app/token.json
     networks:
       - camunda_net
 

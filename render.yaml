@@ -2,14 +2,7 @@
 # Plan de despliegue para Render
 
 services:
-  # 1. Base de Datos (Reemplaza tu contenedor 'db')
-  - type: pserv
-    name: camunda-mysql-db
-    runtime: mysql
-    plan: free # O un plan de pago para producción
-    property: connectionString # La URL de conexión se generará aquí
-
-  # 2. Backend de Java (BPMN Engine)
+  # 1. Backend de Java (BPMN Engine)
   - type: web
     name: bpmn-engine-core
     runtime: docker
@@ -18,23 +11,25 @@ services:
     healthCheckPath: /actuator/health # Asegúrate de tener Spring Actuator
     envVars:
       - key: SPRING_DATASOURCE_URL
-        fromService:
-          type: pserv
-          name: camunda-mysql-db
-          property: connectionString
+        fromGroup: backend-secrets
+      - key: SPRING_DATASOURCE_USERNAME
+        fromGroup: backend-secrets
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromGroup: backend-secrets
       - key: BUSINESS_DATASOURCE_JDBC_URL
-        fromService:
-          type: pserv
-          name: camunda-mysql-db
-          property: connectionString
+        fromGroup: backend-secrets
+      - key: BUSINESS_DATASOURCE_USERNAME
+        fromGroup: backend-secrets
+      - key: BUSINESS_DATASOURCE_PASSWORD
+        fromGroup: backend-secrets
       - key: CAMUNDA_BPM_WEBAPP_CORS_ALLOWED_ORIGINS
         fromService:
           type: web
           name: angular-frontend
           property: url
-      - fromGroup: backend-secrets # Grupo de variables de entorno en Render
+      - fromGroup: backend-secrets # Grupo de variables de entorno en Render (para otros secretos como prefijos de proceso)
 
-  # 3. Backend de Node.js (Chatbot)
+  # 2. Backend de Node.js (Chatbot)
   - type: web
     name: chatbot-backend
     runtime: docker
@@ -54,7 +49,7 @@ services:
           property: url
       - fromGroup: chatbot-secrets # Grupo de variables de entorno en Render
 
-  # 4. Frontend de Angular
+  # 3. Frontend de Angular
   - type: web
     name: angular-frontend
     runtime: docker
