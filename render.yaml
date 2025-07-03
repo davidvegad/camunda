@@ -6,7 +6,7 @@ services:
   - type: web
     name: bpmn-engine-core
     runtime: docker
-    repo: https://github.com/TU_USUARIO/TU_REPOSITORIO.git # ¡Cambia esto!
+    repo: https://github.com/davidvegad/camunda.git # ¡Cambia esto!
     dockerfilePath: ./bpmn-engine-core/Dockerfile
     healthCheckPath: /actuator/health # Asegúrate de tener Spring Actuator
     envVars:
@@ -18,7 +18,7 @@ services:
   - type: web
     name: chatbot-backend
     runtime: docker
-    repo: https://github.com/TU_USUARIO/TU_REPOSITORIO.git # ¡Cambia esto!
+    repo: https://github.com/davidvegad/camunda.git # ¡Cambia esto!
     dockerfilePath: ./chatbot-backend/Dockerfile
     healthCheckPath: /api/health # Deberías crear este endpoint de salud
     envVars:
@@ -32,7 +32,7 @@ services:
   - type: web
     name: angular-frontend
     runtime: docker
-    repo: https://github.com/TU_USUARIO/TU_REPOSITORIO.git # ¡Cambia esto!
+    repo: https://github.com/davidvegad/camunda.git # ¡Cambia esto!
     dockerfilePath: ./angular-frontend/camunda-task-app/Dockerfile
     envVars:
       - key: VITE_BPMN_ENGINE_API_URL # Usaremos VITE_ para que Angular lo exponga
