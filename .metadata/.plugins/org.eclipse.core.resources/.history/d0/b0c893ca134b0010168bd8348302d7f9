@@ -1,0 +1,25 @@
+package com.bpmnengine.negocio.entidad.reglaproceso;
+
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Entity
+@Table(name = "campo_obligatorio")
+@Data
+public class CampoObligatorio {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "proceso_id")
+    private Proceso proceso;
+
+    private String nombre;             // Ej: usuario, fechaInicio
+    private String tipo;               // text, date, number, doc, etc.
+    private String regexValidacion;    // opcional
+    private String etiqueta;           // opcional, para mostrar
+    private Boolean esDocumento = false;
+    private String docExtensiones;     // Ej: "pdf,jpg,png"
+}

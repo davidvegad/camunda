@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class PalabraClaveService {
-	private baseUrl = 'http://localhost:8080/api/palabraclave'; // Ajusta si usas otro endpoint
+	private baseUrl = `${environment.bpmnApiUrl}/api/palabraclave`; // Ajusta si usas otro endpoint
 	
 	constructor(private http: HttpClient) {}
 	

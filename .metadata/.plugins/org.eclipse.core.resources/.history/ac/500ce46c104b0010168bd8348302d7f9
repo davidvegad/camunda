@@ -1,0 +1,14 @@
+package com.bpmnengine.negocio.dto.reglaproceso;
+
+import lombok.Data;
+import java.util.List;
+
+@Data
+public class ProcesoDto {
+    private Long id;
+    private String nombre;
+    private String processKey;
+    private String descripcion;
+    private List<String> palabrasClave;
+    private List<CampoObligatorioDto> campos;
+}

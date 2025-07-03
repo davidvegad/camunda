@@ -1,0 +1,5 @@
+package com.bpmnengine.negocio.servicio.reglaProceso;
+
+public class ProcesoService {
+
+}

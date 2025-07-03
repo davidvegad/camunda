@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Proceso } from './process.model';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ProcessService {
-  private baseUrl = 'http://localhost:8080/api/reglaprocesos'; // Ajusta si usas otro endpoint
+  private baseUrl = `${environment.bpmnApiUrl}/api/reglaprocesos`; // Ajusta si usas otro endpoint
 
   constructor(private http: HttpClient) {}
 

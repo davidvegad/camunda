@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
-const backendUrl = 'http://localhost:8080/api/proceso';
+const backendUrl = `${environment.bpmnApiUrl}/api/proceso`;
 
 @Injectable({ providedIn: 'root' })
 export class ProcesoService {
@@ -86,11 +87,11 @@ export class ProcesoService {
 	}
 	
 	obtenerFormulariosPorTarea(procesoKey: string, taskDefinitionKey: string) {
-		return this.http.get<any[]>(`http://localhost:8080/api/formularios/tarea/${procesoKey}/${taskDefinitionKey}`);
+		return this.http.get<any[]>(`${environment.bpmnApiUrl}/api/formularios/tarea/${procesoKey}/${taskDefinitionKey}`);
 	}
 	
 	guardarRegistroFormulario(payload: any) {
-		return this.http.post('http://localhost:8080/api/formularios/registro', payload);
+		return this.http.post(`${environment.bpmnApiUrl}/api/formularios/registro`, payload);
 	}
 	
 }

@@ -1,0 +1,5 @@
+package com.bpmnengine.negocio.entidad.reglaproceso;
+
+public class CampoObligatorio {
+
+}

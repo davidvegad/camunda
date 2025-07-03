@@ -63,6 +63,9 @@ services:
       - backend
     environment:
       - BACKEND_URL=http://docker-backend:8080
+    volumes:
+      - ../chatbot-backend/credentials.json:/app/credentials.json
+      - ../chatbot-backend/token.json:/app/token.json
     networks:
       - camunda_net
 

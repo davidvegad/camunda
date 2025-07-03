@@ -1,16 +1,15 @@
-// src/app/admin/formularios/formulario.service.ts
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Formulario } from './formulario.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class FormularioService {
 	// Usa la URL completa de tu backend
-	private apiUrl = 'http://localhost:8080/api/formularios';
+	private apiUrl = `${environment.bpmnApiUrl}/api/formularios`;
 	
 	
 	constructor(private http: HttpClient) {}

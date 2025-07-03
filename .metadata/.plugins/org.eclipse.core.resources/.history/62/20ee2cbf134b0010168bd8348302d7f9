@@ -1,0 +1,30 @@
+package com.bpmnengine.negocio.entidad.reglaproceso;
+
+
+import jakarta.persistence.*;
+import lombok.Data;
+import java.util.List;
+
+@Entity
+@Table(name = "proceso")
+@Data
+public class Proceso {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String nombre;
+    @Column(name = "process_key")
+    private String processKey;
+    private String descripcion;
+
+    // Si prefieres, puedes poner las palabras en otra tabla (recomendado)
+    @ElementCollection
+    @CollectionTable(name = "proceso_palabra_clave", joinColumns = @JoinColumn(name = "proceso_id"))
+    @Column(name = "palabra")
+    private List<String> palabrasClave;
+
+    // Relación con campos obligatorios
+    @OneToMany(mappedBy = "proceso", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CampoObligatorio> campos;
+}

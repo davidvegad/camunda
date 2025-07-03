@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CampoFormulario } from './campo-formulario.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CampoFormularioService {
-	private apiUrl = 'http://localhost:8080/api/formulario-campos'; // Ajusta si usas proxy
+	private apiUrl = `${environment.bpmnApiUrl}/api/formulario-campos`; // Ajusta si usas proxy
 	
 	constructor(private http: HttpClient) {}
 	

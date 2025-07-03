@@ -1,0 +1,14 @@
+package com.bpmnengine.negocio.dto.reglaproceso;
+
+import lombok.Data;
+
+@Data
+public class CampoObligatorioDto {
+    private Long id;
+    private String nombre;
+    private String tipo;
+    private String regexValidacion;
+    private String etiqueta;
+    private Boolean esDocumento;
+    private String docExtensiones;
+}

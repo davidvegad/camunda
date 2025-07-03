@@ -1,0 +1,5 @@
+package com.bpmnengine.negocio.mapper.reglaproceso;
+
+public class ProcesoMapper {
+
+}

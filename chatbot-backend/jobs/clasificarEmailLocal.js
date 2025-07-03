@@ -24,7 +24,7 @@ Responde sólo el nombre o key del proceso más adecuado, o "ninguno" si no corr
 `;
 
   try {
-    const response = await axios.post('http://host.docker.internal:1234/v1/chat/completions', {
+    const response = await axios.post(process.env.LOCAL_AI_URL || 'http://host.docker.internal:1234/v1/chat/completions', {
       model: "local-model",
       messages: [
         {

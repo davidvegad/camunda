@@ -62,7 +62,7 @@ export class ProcesoInicioComponent implements OnInit {
 		if (!this.textoLibre) return;
 		this.isLoading = true;
 		//this.http.post('http://localhost:4000/api/chatbot-iniciar-proceso-libre', { texto: this.textoLibre }).subscribe({
-		this.http.post(`${environment.apiNodeUrl}/chatbot-iniciar-proceso-libre`, { texto: this.textoLibre }).subscribe({
+		this.http.post(`${environment.nodeApiUrl}/api/chatbot-iniciar-proceso-libre`, { texto: this.textoLibre }).subscribe({
 			next: (resp: any) => {
 				this.isLoading = false;
 				if (resp.ok) {

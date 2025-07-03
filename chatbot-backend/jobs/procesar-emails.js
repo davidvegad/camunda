@@ -1,7 +1,7 @@
 const axios = require('axios');
 const { clasificarEmailLocal } = require('./clasificarEmailLocal');
 
-const BASE_URL = process.env.BACKEND_URL || 'http://localhost:8080';
+const BASE_URL = process.env.BACKEND_URL || 'http://docker-backend:8080';
 
 // Obtiene la lista de procesos y sus campos desde el backend
 async function obtenerProcesos() {

@@ -9,7 +9,7 @@ const app = express();
 
 //app.use(cors());
 app.use(cors({
-  origin: 'http://localhost:4200', // Cambia el puerto si usas otro en tu front
+  origin: process.env.CORS_ORIGIN || 'http://localhost:4200', // Lee desde variable de entorno o usa el valor local
   credentials: true
 }));
 

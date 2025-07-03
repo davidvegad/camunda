@@ -1,0 +1,39 @@
+package com.bpmnengine.negocio.rest.reglaproceso;
+
+
+import com.bpmnengine.negocio.dto.reglaproceso.ProcesoDto;
+import com.bpmnengine.negocio.entidad.reglaproceso.Proceso;
+import com.bpmnengine.negocio.mapper.reglaproceso.ProcesoMapper;
+import com.bpmnengine.negocio.servicio.reglaproceso.ProcesoService;
+
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/api/reglaprocesos")
+@CrossOrigin(origins = "http://localhost:4200")
+public class ReglaProcesoRestController {
+
+    private final ProcesoService procesoService;
+
+    public ReglaProcesoRestController(ProcesoService procesoService) {
+        this.procesoService = procesoService;
+    }
+
+    // Listar todos los procesos (con campos)
+    @GetMapping
+    public List<ProcesoDto> listarProcesos() {
+        return procesoService.findAll().stream()
+                .map(ProcesoMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    // Obtener un proceso por ID (con campos)
+    @GetMapping("/{id}")
+    public ProcesoDto obtener(@PathVariable Long id) {
+        Proceso entity = procesoService.findById(id);
+        return entity != null ? ProcesoMapper.toDto(entity) : null;
+    }
+}

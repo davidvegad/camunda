@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+    <fullyQualifiedTypeName name="com.bpmnengine.bpmn_engine_core.config.AmqpConfig"/>
+    <fullyQualifiedTypeName name="com.bpmnengine.negocio.entidad.formulario.TareaCabecera"/>
+    <fullyQualifiedTypeName name="com.bpmnengine.negocio.entidad.reglaproceso.Proceso"/>
+    <fullyQualifiedTypeName name="com.bpmnengine.negocio.repositorio.reglaproceso.CampoObligatorioRepository"/>
+</qualifiedTypeNameHistroy>

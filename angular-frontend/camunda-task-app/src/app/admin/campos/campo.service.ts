@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Campo } from './campo.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CampoService {
-  private apiUrl = 'http://localhost:8080/api/campos'; // Ajusta si usas proxy o variable de entorno
+  private apiUrl = `${environment.bpmnApiUrl}/api/campos`; // Ajusta si usas proxy o variable de entorno
 
   constructor(private http: HttpClient) {}
 

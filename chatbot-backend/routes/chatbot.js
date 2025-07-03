@@ -3,7 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 
 // Ajusta la URL de Camunda a la que tengas en tu backend Java personalizado
-const CAMUNDA_API_URL = 'http://localhost:8080/api/proceso/iniciar-con-businesskey/Process_0v8e7t4';
+const CAMUNDA_API_URL = `${process.env.BACKEND_URL || 'http://localhost:8080'}/api/proceso/iniciar-con-businesskey/Process_0v8e7t4`;
 
 //const BACKEND_URL = process.env.BACKEND_URL || "http://docker-backend:8080";
 

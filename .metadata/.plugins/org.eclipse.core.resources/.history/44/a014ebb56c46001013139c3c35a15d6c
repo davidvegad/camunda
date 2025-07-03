@@ -1,0 +1,46 @@
+package com.bpmnengine.negocio.rest.formulario;
+import com.bpmnengine.negocio.dto.formulario.FormularioCampoDto;
+import com.bpmnengine.negocio.dto.formulario.FormularioCampoOrdenDto;
+import com.bpmnengine.negocio.servicio.formulario.FormularioCampoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/formulario-campos")
+public class FormularioCampoRestController {
+
+    @Autowired
+    private FormularioCampoService service;
+
+    // Listar todos los campos asociados a un formulario
+    @GetMapping("/formulario/{formularioId}")
+    public List<FormularioCampoDto> listarPorFormulario(@PathVariable Long formularioId) {
+        return service.findByFormulario(formularioId);
+    }
+
+    // Obtener una asociación por ID
+    @GetMapping("/{id}")
+    public FormularioCampoDto obtener(@PathVariable Long id) {
+        return service.findById(id);
+    }
+
+    // Crear o editar una relación (asociar campo a formulario o editar propiedades)
+    @PostMapping
+    public FormularioCampoDto crearOActualizar(@RequestBody FormularioCampoDto dto) {
+        return service.save(dto);
+    }
+
+    // Eliminar una relación
+    @DeleteMapping("/{id}")
+    public void eliminar(@PathVariable Long id) {
+        service.delete(id);
+    }
+    
+    @PutMapping("/formulario/{formularioId}/orden")
+	public void actualizarOrdenCampos(@PathVariable Long formularioId, @RequestBody List<FormularioCampoOrdenDto> ordenDtos) {
+	    service.actualizarOrdenCampos(formularioId, ordenDtos);
+	}
+
+}

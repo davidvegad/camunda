@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CampoObligatorio } from './campo-obligatorio.model';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class CampoObligatorioService {
-  private baseUrl = 'http://localhost:8080/api/campos-obligatorios';
+  private baseUrl = `${environment.bpmnApiUrl}/api/campos-obligatorios`;
 
   constructor(private http: HttpClient) {}
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item key="hasShownOverlayPopupBefore" value="true"/>
+	<section name="java.lang.Class">
+		<list key="findhistory">
+			<item value="CampoObligatorioDto"/>
+			<item value="spring.jpa.hibernate.ddl"/>
+			<item value="listarCamposDisponibles"/>
+			<item value="TareaSimpleDto"/>
+			<item value="businesskey"/>
+			<item value="business"/>
+			<item value="tareacabeceraserv"/>
+			<item value="lombo"/>
+			<item value="businessDataSource"/>
+			<item value="task.getAssignee() != null"/>
+			<item value="spring"/>
+			<item value="primar"/>
+			<item value="ConfigurationProperties"/>
+			<item value="task.getAssignee()"/>
+			<item value="compl"/>
+		</list>
+	</section>
+</section>

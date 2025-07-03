@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4000/api'
+  bpmnApiUrl: 'http://localhost:8080',
+  nodeApiUrl: 'http://localhost:4000'
 };

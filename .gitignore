@@ -1,36 +1,79 @@
-# === Angular frontend ===
-/angular-frontend/camunda-task-app/dist/
-/angular-frontend/camunda-task-app/out-tsc/
-/angular-frontend/camunda-task-app/node_modules/
-/angular-frontend/camunda-task-app/.angular/
-/angular-frontend/camunda-task-app/coverage/
-/angular-frontend/camunda-task-app/.env
-/angular-frontend/camunda-task-app/.vscode/
-/angular-frontend/camunda-task-app/.idea/
+# Secrets for chatbot backend
+chatbot-backend/.env
+chatbot-backend/credentials.json
+chatbot-backend/token.json
 
-# === Spring Boot backend ===
-/bpmn-engine-core/target/
-/bpmn-engine-core/logs/
-/bpmn-engine-core/.mvn/
-/bpmn-engine-core/.settings/
-/bpmn-engine-core/*.log
-/bpmn-engine-core/*.tmp
-/bpmn-engine-core/*.bak
-/bpmn-engine-core/*.swp
-/bpmn-engine-core/*.orig
-/bpmn-engine-core/*.iml
-/bpmn-engine-core/*.ipr
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
 
-# === IDEs y sistema operativo ===
-.metadata/
-.sonarlint/
-RemoteSystemsTempFiles/
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+
+# System files
 .DS_Store
 Thumbs.db
 
-# === Archivos temporales o bloqueados ===
-*.swo
-*.swp
-*.rej
-*.orig
-*.lock
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
