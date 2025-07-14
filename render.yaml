@@ -2,72 +2,40 @@
 # Plan de despliegue para Render
 
 services:
-  # 1. Base de Datos (Reemplaza tu contenedor 'db')
-  - type: pserv
-    name: camunda-mysql-db
-    runtime: mysql
-    plan: free # O un plan de pago para producción
-    property: connectionString # La URL de conexión se generará aquí
-
-  # 2. Backend de Java (BPMN Engine)
+  # 1. Backend de Java (BPMN Engine)
   - type: web
     name: bpmn-engine-core
     runtime: docker
-    repo: https://github.com/TU_USUARIO/TU_REPOSITORIO.git # ¡Cambia esto!
+    repo: https://github.com/davidvegad/camunda.git # ¡Cambia esto!
     dockerfilePath: ./bpmn-engine-core/Dockerfile
     healthCheckPath: /actuator/health # Asegúrate de tener Spring Actuator
     envVars:
-      - key: SPRING_DATASOURCE_URL
-        fromService:
-          type: pserv
-          name: camunda-mysql-db
-          property: connectionString
-      - key: BUSINESS_DATASOURCE_JDBC_URL
-        fromService:
-          type: pserv
-          name: camunda-mysql-db
-          property: connectionString
+      - fromGroup: backend-secrets # Importa todas las variables del grupo backend-secrets
       - key: CAMUNDA_BPM_WEBAPP_CORS_ALLOWED_ORIGINS
-        fromService:
-          type: web
-          name: angular-frontend
-          property: url
-      - fromGroup: backend-secrets # Grupo de variables de entorno en Render
+        value: http://{{ .Service.angular-frontend.host }}:{{ .Service.angular-frontend.port }} # Construye la URL del frontend
 
-  # 3. Backend de Node.js (Chatbot)
+  # 2. Backend de Node.js (Chatbot)
   - type: web
     name: chatbot-backend
     runtime: docker
-    repo: https://github.com/TU_USUARIO/TU_REPOSITORIO.git # ¡Cambia esto!
+    repo: https://github.com/davidvegad/camunda.git # ¡Cambia esto!
     dockerfilePath: ./chatbot-backend/Dockerfile
     healthCheckPath: /api/health # Deberías crear este endpoint de salud
     envVars:
+      - fromGroup: chatbot-secrets # Importa todas las variables del grupo chatbot-secrets
       - key: BACKEND_URL
-        fromService:
-          type: web
-          name: bpmn-engine-core
-          property: url
+        value: http://{{ .Service.bpmn-engine-core.host }}:{{ .Service.bpmn-engine-core.port }} # Construye la URL del backend Java
       - key: CORS_ORIGIN
-        fromService:
-          type: web
-          name: angular-frontend
-          property: url
-      - fromGroup: chatbot-secrets # Grupo de variables de entorno en Render
+        value: http://{{ .Service.angular-frontend.host }}:{{ .Service.angular-frontend.port }} # Construye la URL del frontend
 
-  # 4. Frontend de Angular
+  # 3. Frontend de Angular
   - type: web
     name: angular-frontend
     runtime: docker
-    repo: https://github.com/TU_USUARIO/TU_REPOSITORIO.git # ¡Cambia esto!
+    repo: https://github.com/davidvegad/camunda.git # ¡Cambia esto!
     dockerfilePath: ./angular-frontend/camunda-task-app/Dockerfile
     envVars:
       - key: VITE_BPMN_ENGINE_API_URL # Usaremos VITE_ para que Angular lo exponga
-        fromService:
-          type: web
-          name: bpmn-engine-core
-          property: url
+        value: http://{{ .Service.bpmn-engine-core.host }}:{{ .Service.bpmn-engine-core.port }} # Construye la URL del backend Java
       - key: VITE_CHATBOT_API_URL
-        fromService:
-          type: web
-          name: chatbot-backend
-          property: url
+        value: http://{{ .Service.chatbot-backend.host }}:{{ .Service.chatbot-backend.port }} # Construye la URL del backend Node.js
